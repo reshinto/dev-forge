@@ -35,7 +35,7 @@ For structural changes:
 - Follows the project's established patterns — see `.claude/rules/` for specifics
 - Module boundaries and state ownership are respected
 - Build optimization is considered (code splitting, lazy loading)
-- Security-by-design (no eval, no innerHTML, no unsafe DOM manipulation)
+- Security-by-design (no dynamic code execution, no raw HTML injection, no unsafe input handling)
 
 ### Step 4: Implementation
 
@@ -51,7 +51,7 @@ Use the project's existing patterns for:
 Code review checklist:
 
 - Naming: no single-character variables, descriptive names throughout
-- Types: no `any`, correct use of discriminated unions and strict types
+- Types: no unsafe type escape hatches, correct use of variant types and strict type patterns
 - DRY: reused strings and metadata centralized in constants
 - Architecture: follows the project's established patterns
 

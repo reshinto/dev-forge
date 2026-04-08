@@ -49,9 +49,9 @@ Review and optimize the README.md and repository metadata for discoverability, c
 ### Accuracy
 
 - All listed features and capabilities actually exist in the codebase
-- Scripts table matches `package.json` commands
+- Scripts/commands table matches project manifest (e.g., `package.json`, `Makefile`, `pyproject.toml`)
 - Any listed keyboard shortcuts or CLI flags match the actual implementation
-- Technology versions match `package.json` or equivalent manifest
+- Technology versions match the project manifest
 
 ### Developer Friendliness
 

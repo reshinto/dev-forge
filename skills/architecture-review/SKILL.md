@@ -29,20 +29,20 @@ Evaluate a proposed or existing architectural change for state management correc
 
 ### Build Optimization
 
-- Code splitting uses lazy loading + Suspense boundaries for route-level or heavy components
+- Code splitting or lazy loading used for heavy modules where the platform supports it
 - No dynamic imports with string interpolation — static analysis requires statically resolvable paths
-- Tree-shaking verified: unused exports don't inflate bundle
+- Unused exports don't inflate the final artifact (tree-shaking, dead code elimination)
 - Large dependencies evaluated for lazy loading or lighter alternatives
-- Bundle analysis performed when adding new dependencies
+- Artifact size analysis performed when adding new dependencies
 
 ### Security-by-Design
 
-- No `eval()`, `Function()`, or `innerHTML` in any component
+- No `eval()`, `exec()`, `Function()`, or equivalent dynamic code execution
 - User-controlled content treated as untrusted — no execution of user input
 - User-provided inputs validated before passing to any execution or processing function
-- CSP-compliant patterns: no inline scripts, no `unsafe-eval`
-- Dynamic content rendered safely — no `dangerouslySetInnerHTML`
-- Dependencies audited: `npm audit` clean or vulnerabilities documented
+- No inline scripts or unsafe dynamic evaluation patterns
+- Dynamic content rendered safely — no raw HTML injection
+- Dependencies audited: audit clean (e.g., `npm audit`, `pip audit`, `cargo audit`) or vulnerabilities documented
 
 ## Output Format
 

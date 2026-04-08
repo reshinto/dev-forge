@@ -75,11 +75,11 @@ Symptoms: state not updating, validation gaps, values persisting across sessions
 
 Symptoms: module not found, circular dependencies, tree-shaking issues
 
-1. Check path alias resolution in `tsconfig.json` or bundler config
+1. Check path alias resolution in the project's compiler/bundler config (e.g., `tsconfig.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`)
 2. Verify no circular dependencies between modules
 3. Check glob patterns or dynamic imports — are paths statically analyzable? (no string interpolation)
-4. Run the TypeScript compiler with `--noEmit` to surface type errors
-5. Check barrel exports for missing or incorrect re-exports
+4. Run the project's type checker or compiler to surface type errors
+5. Check barrel exports or package entry points for missing or incorrect re-exports
 
 ## Rules
 

@@ -31,7 +31,7 @@ Review project documentation for clarity, accuracy, structural consistency, and 
 - README.md follows the structure defined in `.claude/rules/docs.md`
 - `docs/` files follow their defined sections (architecture, testing, deployment, contributing)
 - Internal links between docs are not broken
-- Scripts table in README matches actual `package.json` scripts
+- Scripts/commands table in README matches actual project manifest (e.g., `package.json`, `Makefile`, `pyproject.toml`)
 
 ### Contributor Onboarding
 
@@ -51,7 +51,7 @@ Review project documentation for clarity, accuracy, structural consistency, and 
 - **Accuracy**: Comments accurately describe what the code does — no stale comments that contradict the code
 - **Comment rot**: Identify comments that were accurate when written but no longer match the current implementation
 - **Maintainability**: Comments explain "why" not "what" — code should be self-documenting for the "what"
-- **Completeness**: Exported functions and types have JSDoc comments
+- **Completeness**: Exported functions and types have documentation comments (JSDoc, docstrings, or equivalent)
 
 ## Rules
 

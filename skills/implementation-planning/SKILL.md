@@ -25,10 +25,10 @@ Create a structured implementation plan for a new feature or change.
 ### Phase: [phase number and name]
 
 #### Files to Create
-- [ ] path/to/file.ts - description
+- [ ] path/to/file - description
 
 #### Files to Modify
-- [ ] path/to/file.ts - what changes
+- [ ] path/to/file - what changes
 
 #### Tests Required
 - [ ] Unit: description

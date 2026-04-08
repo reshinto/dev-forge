@@ -47,11 +47,11 @@ Audit the specified component(s) or the entire UI for WCAG 2.1 AA compliance, an
 - Layout animations don't cause content reflow that loses keyboard focus
 - Stagger animations respect `prefers-reduced-motion: reduce`
 
-### Design Token Consistency (if project uses Tailwind)
+### Design Token Consistency (if project uses a design system)
 
-- Colors use CSS custom properties (e.g., `var(--color-primary)`), not raw Tailwind classes with hardcoded values
-- Spacing follows the Tailwind scale consistently
-- Responsive breakpoints use project-standard values per the design system in `.claude/rules/ui-ux.md`
+- Colors use design tokens or CSS custom properties (e.g., `var(--color-primary)`), not hardcoded values
+- Spacing follows the project's spacing scale consistently
+- Responsive breakpoints use project-standard values per `.claude/rules/ui-ux.md`
 - Typography uses design token font families
 
 ## Output Format

@@ -14,34 +14,34 @@ Run a combined security and test coverage audit to verify the project meets qual
 
 ### 1. Coverage Verification
 
-- Run `npm run test -- --coverage`
+- Run the project's test command with coverage enabled (per `rules/testing.md`)
 - Verify coverage meets project-defined thresholds (see `rules/testing.md`)
 - Identify any files below thresholds
 
 ### 2. E2E Test Validation
 
-- Run `npm run e2e` (dev server starts automatically via hooks)
+- Run the project's E2E test command (per `rules/testing.md`)
 - See `rules/testing.md` for E2E spec conventions
-- Confirm 3-viewport coverage: desktop (1280px), tablet (768px), mobile (375px)
+- Confirm multi-viewport coverage if applicable (desktop, tablet, mobile)
 
-### 3. OWASP Client-Side Security
+### 3. Security Checks
 
-- Run `npm audit` and report vulnerabilities
-- Scan for `eval()`, `Function()`, `innerHTML` usage: `grep -r "eval\|innerHTML\|Function(" src/`
-- Verify no `dangerouslySetInnerHTML` in components
+- Run the project's dependency audit (e.g., `npm audit`, `pip audit`, `cargo audit`) and report vulnerabilities
+- Scan for dynamic code execution: `eval()`, `exec()`, `Function()`, raw HTML injection
+- Verify no unsafe dynamic content rendering patterns
 - Check that any code editor or REPL components are read-only by default with no script execution
 - Verify user inputs are sanitized before passing to any processing function
 - Confirm no inline event handlers with string code
 
 ### 4. CSP Compliance
 
-- No inline `<script>` tags in `index.html`
+- No inline scripts in HTML entry points
 - No `unsafe-eval` or `unsafe-inline` in Content Security Policy
 - External resources loaded with integrity hashes where possible
 
 ### 5. Dependency Security
 
-- Check `package-lock.json` for known vulnerabilities
+- Check lock file (e.g., `package-lock.json`, `poetry.lock`, `Cargo.lock`) for known vulnerabilities
 - Flag any dependency with critical or high severity
 - Verify no unnecessary runtime dependencies (dev deps not in production bundle)
 

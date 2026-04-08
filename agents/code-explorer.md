@@ -16,21 +16,21 @@ Deeply analyze the project's codebase by tracing execution paths through its cor
 
 ### 1. Module Registration / Entry Pipeline
 
-- Locate barrel entry points (e.g., `src/index.ts` or equivalent) where modules self-register or are imported
+- Locate entry points (e.g., barrel files, `__init__.py`, `main.go`, `mod.rs`) where modules self-register or are imported
 - Follow import chains to the registry or service container that aggregates definitions
 - Identify the singleton or store that holds all registered items
 
 ### 2. Data Flow Analysis
 
-- User interaction → state dispatch → slice or reducer loads definition
+- User interaction or API call → state dispatch → handler loads definition
 - Input shape → transform/processing function → output data structure
-- Output stored in state → index or cursor advances on iteration (e.g., playback, pagination)
+- Output stored in state or returned → iteration advances (e.g., pagination, streaming, cursor)
 
 ### 3. Rendering Pipeline
 
-- Identify the discriminated union or variant type that drives conditional rendering
-- Trace how the `kind`/`type`/`variant` field dispatches to the correct component
-- Map which container component owns the dispatch logic
+- Identify the variant type, enum, or protocol that drives conditional behavior (rendering, routing, or processing)
+- Trace how the variant field dispatches to the correct handler or component
+- Map which module owns the dispatch logic
 
 ### 4. Module / Asset Loading
 
