@@ -119,6 +119,32 @@ check_rust() {
   [ -n "$HITS" ] && warn "Rust" "#[allow(...)] — add justification comment" "$HITS"
 }
 
+# --- C / C++ ---
+
+check_cpp() {
+  local HITS
+
+  # Raw pointer usage without smart pointer
+  HITS=$(grep -nE '\b\w+\s*\*\s*\w+\s*=\s*new\b' "$FILE" | grep -v '^\s*//' || true)
+  [ -n "$HITS" ] && warn "C/C++" "Raw new — prefer smart pointers (unique_ptr, shared_ptr)" "$HITS"
+
+  # C-style casts
+  HITS=$(grep -nE '\(\s*(int|char|float|double|long|void\s*\*)\s*\)' "$FILE" | grep -v '^\s*//' || true)
+  [ -n "$HITS" ] && warn "C/C++" "C-style cast — use static_cast/reinterpret_cast" "$HITS"
+
+  # using namespace std in headers
+  case "$FILE" in
+    *.h|*.hpp|*.hxx)
+      HITS=$(grep -nE '^\s*using\s+namespace\s+std' "$FILE" || true)
+      [ -n "$HITS" ] && warn "C/C++" "'using namespace std' in header — pollutes global namespace" "$HITS"
+      ;;
+  esac
+
+  # Catching by value instead of reference
+  HITS=$(grep -nE 'catch\s*\(\s*\w+\s+\w+\s*\)' "$FILE" | grep -v '&' | grep -v '^\s*//' || true)
+  [ -n "$HITS" ] && warn "C/C++" "Catch by value — catch by const reference instead" "$HITS"
+}
+
 # --- Dispatch by file extension ---
 
 LANG=""
@@ -143,6 +169,10 @@ case "$FILE" in
   *.rs)
     LANG="Rust"
     check_rust
+    ;;
+  *.c|*.cpp|*.cc|*.cxx|*.h|*.hpp|*.hxx)
+    LANG="C/C++"
+    check_cpp
     ;;
   *)
     # Unsupported language — skip silently
