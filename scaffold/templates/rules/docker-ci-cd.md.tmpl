@@ -1,0 +1,52 @@
+## Docker / CI-CD Rules
+
+> This file is generated for projects with containerization or automated deployment pipelines. Remove it if neither applies.
+
+### Dockerfile Conventions
+
+- Use multi-stage builds to keep production images minimal
+- Pin base image versions explicitly — never use `:latest` in production Dockerfiles
+- Run as a non-root user in the final stage
+- Copy only what the application needs — use `.dockerignore` to exclude dev dependencies, tests, and secrets
+- Layer order: install dependencies before copying source code (maximizes cache reuse)
+
+Example stage structure:
+```
+Stage 1 (builder): install all deps, build/compile
+Stage 2 (runner):  copy only the compiled output + production deps, set USER
+```
+
+### CI Pipeline Structure
+
+The CI pipeline runs in this order. Each step must pass before the next begins:
+
+1. **Lint** — `{{LINT_CMD}}`
+2. **Format check** — `{{FORMAT_CMD}}`
+3. **Type check** — `{{TYPECHECK_CMD}}`
+4. **Unit tests** — `{{TEST_CMD}}`
+5. **Build** — verify the production artifact builds cleanly
+6. **E2E tests** (if applicable) — `{{E2E_RUNNER}}`
+7. **Security scan** — dependency audit + secret detection
+
+### Deploy Triggers
+
+| Branch / Ref  | Environment | Trigger             |
+|---------------|-------------|---------------------|
+| `main`        | Production  | On merge / push     |
+| `staging`     | Staging     | On push             |
+| Feature branch| Preview     | On PR open/update   |
+
+Update this table to match the project's actual deployment targets.
+
+### Secrets and Configuration
+
+- Never commit secrets, tokens, or credentials to the repository
+- Use environment variables for all environment-specific configuration
+- Provide a `.env.example` file listing all required variables without values
+- Secrets in CI must be stored in the platform's secret store — not in repository files
+
+### Image Tagging
+
+- Tag production images with the full git SHA: `{{PROJECT_NAME}}:<git-sha>`
+- Also tag with the semantic version on release: `{{PROJECT_NAME}}:v<semver>`
+- Never overwrite an existing SHA-tagged image

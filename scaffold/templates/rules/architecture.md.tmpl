@@ -1,0 +1,41 @@
+## Architecture Rules
+
+### Overview
+
+{{ARCHITECTURE_SUMMARY}}
+
+### State Management
+
+{{STATE_MANAGEMENT}}
+
+When state management is present:
+- Keep state slices focused with clear responsibility boundaries
+- Prefer immutable update patterns (e.g., immer middleware, spread operators)
+- Derive computed values rather than storing redundant state
+- Avoid putting UI-only state into global stores
+
+### Directory Organization
+
+{{KEY_PATHS}}
+
+Follow consistent directory conventions:
+- Group files by feature or domain, not by file type
+- Co-locate tests with the code they test (or in a sibling `__tests__/` directory)
+- Barrel exports (`index.ts` / `__init__.py`) at each public boundary
+- Never reach across domain boundaries with deep relative imports — use the import alias
+
+### Adding New Features
+
+1. Identify which domain or category the feature belongs to
+2. Create the feature directory following the existing structure in that domain
+3. Implement the feature module (logic, types, tests)
+4. Register or export the feature via the appropriate barrel or registry
+5. Add a story or integration test if the project uses a component explorer
+6. Update any relevant documentation in the same pass
+
+### General Constraints
+
+- All UI components are generic — no business-logic-specific code embedded in presentational components
+- Separate concerns: data fetching, transformation, and rendering belong in distinct layers
+- Prefer composition over inheritance
+- Source files are first-class artifacts — format and lint them like production code, not config

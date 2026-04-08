@@ -1,0 +1,49 @@
+# {{PROJECT_NAME}}
+
+{{PROJECT_DESCRIPTION}}
+
+## General Behavior
+
+- When asked to show command output (git status, test results, etc.), show the RAW output first, then summarize if needed. Never replace raw output with a summary.
+- When asked to "continue" prior work, produce a brief plan of what you will do within the first response, then start executing. Do not spend the entire session reading files without producing output.
+
+## Project Setup
+
+Primary language: {{PRIMARY_LANGUAGE}}. Run `{{LINT_CMD}}` and `{{FORMAT_CMD}}` before committing.
+
+## Tech Stack
+
+{{TECH_STACK}}
+
+## Architecture
+
+{{ARCHITECTURE_SUMMARY}}
+
+See `.claude/rules/architecture.md` for full architectural constraints.
+
+## Key Paths
+
+{{KEY_PATHS}}
+
+## Rules
+
+See `.claude/rules/` for full constraints. Most commonly violated: naming (no single-char variables), no unsafe type escapes, import alias conventions, branch-per-task, non-persistent edits.
+
+## General Guidelines
+
+- When exploring, prioritize source files and tests over config files.
+- If the task is clear, start making changes immediately — do not read more than 3 files before writing code.
+- If exploration is needed, read files and propose a concrete plan within the first 5 minutes; never spend an entire session only reading.
+- Lead with deliverables: always produce at least one code change or a written plan before asking clarifying questions.
+
+## Documentation
+
+- After any file reorganization or code generation task, ALWAYS update all related documentation (README, index files, any doc references) in the same pass. Do not wait for the user to remind you.
+
+## Git Workflow
+
+Branch-per-task mandatory. Check existing feature branches before creating new ones. See `.claude/rules/workflow.md`.
+
+## Testing
+
+CI sequence: `{{LINT_CMD}}` → `{{FORMAT_CMD}}` → `{{TYPECHECK_CMD}}` → `{{TEST_CMD}}` — fix iteratively until all green. Every new feature or algorithm needs tests. See `.claude/rules/testing.md`.

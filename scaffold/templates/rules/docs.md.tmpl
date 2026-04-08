@@ -1,0 +1,40 @@
+## Documentation Rules
+
+### Doc Structure
+
+Every public-facing document should follow this structure:
+1. **Title** — concise, describes what this is (not what it does)
+2. **Overview** — one paragraph explaining the purpose and audience
+3. **Prerequisites** — what the reader needs before starting
+4. **Content** — the actual guide, reference, or explanation
+5. **Examples** — at least one concrete, runnable example
+6. **See Also** — links to related docs or external references
+
+### Update Triggers
+
+Update documentation in the same pass as the code change. Do not defer doc updates to a follow-up PR.
+
+| Change type                        | Docs to update                              |
+|------------------------------------|---------------------------------------------|
+| New feature or module added        | README, feature doc, index/barrel exports   |
+| Existing feature modified          | Relevant feature doc, changelog if present  |
+| File or directory renamed/moved    | All import references, README paths         |
+| New environment variable or config | README setup section, .env.example          |
+| New CLI command or script          | README usage section, help text             |
+| New test or story added            | Testing doc if conventions change           |
+| API surface changed                | API reference doc, migration guide if breaking |
+
+### Style Guidelines
+
+- Write for the intended audience — assume a competent developer unfamiliar with this codebase
+- Use active voice and present tense
+- Code blocks for all commands, file paths, and inline code references
+- Avoid jargon specific to internal tooling without defining it first
+- Keep headings short — they are navigation anchors, not sentences
+
+### {{PROJECT_NAME}}-Specific Docs
+
+- Primary documentation root: project root `README.md`
+- Architecture decisions: `.claude/rules/architecture.md`
+- Workflow and branching: `.claude/rules/workflow.md`
+- Update the README after any significant feature addition or reorganization

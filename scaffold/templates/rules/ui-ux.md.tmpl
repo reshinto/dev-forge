@@ -1,0 +1,49 @@
+## UI/UX Rules
+
+> This file is generated for frontend projects only. If this project does not have a UI layer, remove this file.
+
+### Design System
+
+- All visual decisions must reference the project design system or component library
+- Do not introduce one-off colors, font sizes, or spacing values — use design tokens
+- CSS framework in use: **{{CSS_FRAMEWORK}}**
+- When in doubt about a visual decision, prefer the least surprising option for the user
+
+### Responsive Breakpoints
+
+Define breakpoints here as the project establishes them. Default starting point:
+
+| Breakpoint | Min width | Usage                        |
+|------------|-----------|------------------------------|
+| `sm`       | 640px     | Large phones, small tablets  |
+| `md`       | 768px     | Tablets                      |
+| `lg`       | 1024px    | Laptops                      |
+| `xl`       | 1280px    | Desktops                     |
+| `2xl`      | 1536px    | Large monitors               |
+
+Update this table to match the project's actual breakpoints.
+
+### Accessibility (WCAG 2.1 AA)
+
+All UI work must meet WCAG 2.1 Level AA. Required practices:
+
+- Sufficient color contrast: 4.5:1 for normal text, 3:1 for large text and UI components
+- All interactive elements must be keyboard-navigable and have visible focus indicators
+- All images and icons must have meaningful `alt` text or be marked as decorative (`alt=""`)
+- Form inputs must have associated `<label>` elements or `aria-label` attributes
+- Dynamic content changes must be announced to screen readers via `aria-live` regions where appropriate
+- Use semantic HTML elements (`<button>`, `<nav>`, `<main>`, `<header>`) before reaching for `<div>`
+
+### Animation and Motion
+
+- All animations must respect the `prefers-reduced-motion` media query
+- Provide a no-animation fallback for every animated component
+- Avoid animations that flash or flicker — risk of triggering photosensitive conditions
+- Keep animation durations short (150–300ms for UI transitions); reserve longer durations for deliberate emphasis
+
+### Component Conventions
+
+- One component per file
+- Co-locate component styles with the component file when using CSS Modules or scoped styles
+- Prop interfaces must be explicitly typed — no implicit `any` for event handlers or children
+- Default to controlled components; document when an uncontrolled pattern is intentional

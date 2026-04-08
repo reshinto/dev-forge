@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [],
+    "deny": []
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": ".claude/hooks/auto-plugin-mode.sh"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": ".claude/hooks/session-end-unified-gate.sh",
+        "timeout": 900000
+      }
+    ]
+  },
+  "enabledPlugins": []
+}

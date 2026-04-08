@@ -1,0 +1,37 @@
+## Workflow Rules
+
+### Branch Strategy (MANDATORY — cannot be skipped unless the user explicitly says so)
+
+- **Every new task MUST start on a new branch rebased from main.** This is non-negotiable.
+- Before any code changes, always run: `git checkout main && git pull && git checkout -b <type>/<short-description>`
+- If the branch already exists and main has new commits, rebase: `git rebase main`
+- Branch names: `<type>/<short-description>` (e.g., `feat/user-auth`, `fix/modal-close`, `chore/update-deps`)
+- A "new task" means any new user request that is not a direct continuation of the current in-progress PR
+- Never reuse an existing feature branch for a different task
+- Check existing feature branches before creating a new one
+
+### Development Flow
+
+1. **Product Strategist** — validate feature alignment with project goals
+2. **UI/UX** — consult for any visual or interaction changes
+3. **Tech Lead** — define architecture for structural changes
+4. **Implement** — execute in phases per the project plan
+5. **Senior Engineer** — review changes before merge
+6. **QA** — validate behavior, tests, and security
+7. **Technical Writer** — review documentation and user-facing content
+
+### Git Operations
+
+- The post-session quality gate must pass before: `git add`, `git commit`, `git push`, or PR creation
+- Quality gate: `{{LINT_CMD}}` + `{{FORMAT_CMD}}` + `{{TYPECHECK_CMD}}` + `{{TEST_CMD}}`
+- Commit messages: imperative mood, present tense, no AI/assistant references, no "Co-Authored-By" attributions
+- No force pushes to main
+- Keep all related work on a single feature branch for large multi-phase tasks
+
+### PR Requirements
+
+- All CI checks must pass before opening a PR
+- Create a PR immediately after pushing a feature branch — do not leave pushed branches without a PR
+- PR title: under 70 characters, imperative mood
+- PR body: summary bullet points + test plan checklist
+- Request review from: senior-engineer, qa-tester, and technical-writer agents (or human equivalents)

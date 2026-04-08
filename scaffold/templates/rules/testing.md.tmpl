@@ -1,0 +1,43 @@
+## Testing Rules
+
+### Test Runner
+
+**Unit / Integration**: {{TEST_RUNNER}}
+**E2E**: {{E2E_RUNNER}}
+
+### Coverage Thresholds
+
+Minimum thresholds (lines/functions/branches/statements): **{{COVERAGE_THRESHOLDS}}**
+
+Coverage checks run as part of the CI sequence. A build that drops below any threshold is treated as a failing build.
+
+### Test Location Conventions
+
+- Unit and integration tests live in a `__tests__/` directory co-located with the module under test
+- E2E tests live in a top-level `e2e/` or `tests/` directory
+- Test file naming: `<module-name>.test.<ext>` for unit tests, `<feature>.spec.<ext>` for E2E
+- One test file per module — do not group unrelated tests into a single file
+
+### What to Test
+
+- Every new feature or algorithm needs at minimum: correctness tests + one integration/pipeline test
+- Edge cases: empty input, single element, maximum bounds, invalid input
+- Do not test implementation details — test observable behavior and outputs
+- Mocks: use sparingly; prefer real implementations for unit tests where practical
+
+### CI Sequence
+
+Run in this exact order and fix each step before proceeding to the next:
+
+```
+{{LINT_CMD}}
+{{FORMAT_CMD}}
+{{TYPECHECK_CMD}}
+{{TEST_CMD}}
+```
+
+E2E runs after unit tests pass. The dev server auto-starts for E2E if needed.
+
+### Quality Gate
+
+Do not run lint/typecheck/format/test mid-implementation. Run the full CI sequence only at the final quality gate before committing. Fix iteratively until all steps are green.

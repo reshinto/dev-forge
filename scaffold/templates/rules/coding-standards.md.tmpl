@@ -1,0 +1,41 @@
+## Coding Standards
+
+### Naming
+
+- No single-character variable names (no `i`, `j`, `k`, `n`, `x`, `y`, `z`)
+- No variable names composed of combined single characters (no `ij`, `xy`)
+- Use meaningful names everywhere: tests, temporary variables, loop iterators
+- Examples: `elementIndex`, `outerIndex`, `currentNode`, `arrayLength`, `itemCount`
+
+### Code Quality
+
+- Centralize reused strings and metadata in a constants file — avoid duplicating literals
+- Enforce DRY — extract shared logic into utilities, hooks, or helper functions
+- Comment intent and purpose where useful; avoid bloated or obvious commentary
+- No unsafe type escapes (no `any` in TypeScript, no `# type: ignore` in Python without justification)
+- Use `unknown` with type narrowing instead of `any` when the type is genuinely dynamic
+- Prefer `const` over `let`; never use `var`
+
+### Formatting
+
+All formatting is enforced by the project formatter. Run `{{FORMAT_CMD}}` before committing. Key conventions:
+- Consistent indentation (no tabs unless the project standard requires them)
+- Trailing whitespace removed
+- Trailing commas where the language/formatter permits
+- Semicolons as required by language convention
+
+### Imports
+
+- Use `{{IMPORT_ALIAS}}` path alias for source-relative imports (if configured; use bare relative paths otherwise)
+- Use type-only import syntax for imports that carry no runtime value (e.g., `import type { Foo }` in TypeScript)
+- Group imports: external libraries first, then internal/aliased paths, then relative paths
+- One blank line between import groups
+
+### Type Safety
+
+- Enable strict mode in the language's type checker
+- Enable checked index access where available (e.g., `noUncheckedIndexedAccess` in TypeScript)
+- Array and map indexing can return `undefined` — guard access appropriately or use explicit tuple types for coordinate/pair arrays
+- Use discriminated unions over broad type assertions
+- Prefer interfaces for object shapes, types for unions and intersections (TypeScript)
+- Make variant handling exhaustive — use a compile-time exhaustiveness check or equivalent where possible
