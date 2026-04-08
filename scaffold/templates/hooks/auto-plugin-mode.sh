@@ -6,7 +6,9 @@
 # present in settings.local.json that are NOT in plugin-profiles.json are preserved
 # (merged, not overwritten). This ensures the forge plugin itself is never disabled.
 #
-# Uses jq for JSON manipulation. Always exits 0 — never blocks session start.
+# Uses Python for JSON manipulation (available on macOS/Linux without extra installs).
+# Falls back to a simple sed-based approach if Python is not available.
+# Always exits 0 — never blocks session start.
 
 set -euo pipefail
 
@@ -24,12 +26,6 @@ if [ ! -f "$SETTINGS" ]; then
   echo '{}' > "$SETTINGS"
 fi
 
-# Guard: jq must be available
-if ! command -v jq &>/dev/null; then
-  echo "WARN: jq not found — plugin auto-switching disabled" >&2
-  exit 0
-fi
-
 # Get current branch (handle detached HEAD)
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
 if [ -z "$BRANCH" ] || [ "$BRANCH" = "HEAD" ]; then
@@ -41,63 +37,87 @@ if [ -n "${1:-}" ]; then
   BRANCH="$1"
 fi
 
-# Build the list of managed plugins (all plugins in profiles)
-MANAGED_PLUGINS=$(jq -r '([.core[], (.branch_modes | to_entries[].value[])] | unique | .[])' "$PROFILES" 2>/dev/null)
-
-if [ -z "$MANAGED_PLUGINS" ]; then
-  echo "WARN: No plugins found in plugin-profiles.json" >&2
-  exit 0
-fi
-
-# Build the list of plugins to enable (core + branch-matched)
-CORE_PLUGINS=$(jq -r '.core[]' "$PROFILES" 2>/dev/null)
-BRANCH_PLUGINS=""
-while IFS= read -r PREFIX; do
-  if [[ "$BRANCH" == "$PREFIX"* ]]; then
-    MATCHED=$(jq -r --arg prefix "$PREFIX" '.branch_modes[$prefix][]' "$PROFILES" 2>/dev/null)
-    BRANCH_PLUGINS="$BRANCH_PLUGINS"$'\n'"$MATCHED"
+# Use Python (available on macOS and virtually all Linux) for JSON manipulation.
+# Python is more universally available than jq or Node.js.
+PYTHON=""
+for PY in python3 python; do
+  if command -v "$PY" &>/dev/null; then
+    PYTHON="$PY"
+    break
   fi
-done < <(jq -r '.branch_modes | keys[]' "$PROFILES" 2>/dev/null)
+done
 
-ENABLED_PLUGINS=$(echo -e "$CORE_PLUGINS\n$BRANCH_PLUGINS" | sort -u | grep -v '^$')
-
-# Build the new enabledPlugins object using jq:
-# 1. Start with existing settings
-# 2. Remove managed plugins from existing enabledPlugins (preserve unmanaged)
-# 3. Add all managed plugins as false
-# 4. Enable core + branch-matched plugins
-MANAGED_JSON=$(echo "$MANAGED_PLUGINS" | jq -Rn '[inputs] | map({(.): false}) | add // {}')
-ENABLED_JSON=$(echo "$ENABLED_PLUGINS" | jq -Rn '[inputs | select(length > 0)] | map({(.): true}) | add // {}')
-
-# Merge: existing unmanaged + managed (false) + enabled (true)
-NEW_SETTINGS=$(jq --argjson managed "$MANAGED_JSON" --argjson enabled "$ENABLED_JSON" '
-  # Get existing enabledPlugins, default to {}
-  (.enabledPlugins // {}) as $existing |
-  # Filter out managed plugins from existing (keep unmanaged)
-  ($existing | to_entries | map(select(.key as $k | ($managed | has($k)) | not)) | from_entries) as $unmanaged |
-  # Merge: unmanaged + managed defaults + enabled overrides
-  .enabledPlugins = ($unmanaged + $managed + $enabled)
-' "$SETTINGS" 2>/dev/null)
-
-if [ -z "$NEW_SETTINGS" ]; then
-  echo "WARN: plugin auto-switch failed — jq merge error" >&2
+if [ -z "$PYTHON" ]; then
+  echo "WARN: python3/python not found — plugin auto-switching disabled" >&2
   exit 0
 fi
 
-# Check if anything changed
-OLD_ENABLED=$(jq -r '.enabledPlugins // {}' "$SETTINGS" 2>/dev/null | jq -S '.')
-NEW_ENABLED=$(echo "$NEW_SETTINGS" | jq -S '.enabledPlugins // {}')
+$PYTHON - "$PROFILES" "$SETTINGS" "$BRANCH" << 'PYEOF'
+import json
+import sys
+import os
+import tempfile
 
-# Atomic write: temp file + rename
-TMP_FILE="$SETTINGS.tmp.$$"
-echo "$NEW_SETTINGS" | jq '.' > "$TMP_FILE"
-mv "$TMP_FILE" "$SETTINGS"
+profiles_path = sys.argv[1]
+settings_path = sys.argv[2]
+branch = sys.argv[3]
 
-ENABLED_COUNT=$(echo "$NEW_SETTINGS" | jq '[.enabledPlugins | to_entries[] | select(.value == true)] | length')
-echo "Plugin mode: branch \"$BRANCH\" — enabled $ENABLED_COUNT plugins"
+try:
+    with open(profiles_path) as f:
+        profiles = json.load(f)
+    with open(settings_path) as f:
+        settings = json.load(f)
 
-if [ "$OLD_ENABLED" != "$NEW_ENABLED" ]; then
-  echo "Plugins changed — restart session (new chat) for changes to take effect"
-fi
+    # Collect all plugin names managed by this profiles file
+    managed = set(profiles.get("core", []))
+    for plugins in profiles.get("branch_modes", {}).values():
+        managed.update(plugins)
+
+    # Start with existing enabledPlugins, preserving unmanaged entries
+    existing = settings.get("enabledPlugins", {})
+    merged = {}
+
+    # Copy unmanaged plugins (not in profiles) as-is
+    for plugin_id, enabled in existing.items():
+        if plugin_id not in managed:
+            merged[plugin_id] = enabled
+
+    # Set all managed plugins to false initially
+    for plugin in managed:
+        merged[plugin] = False
+
+    # Enable core plugins
+    for plugin in profiles.get("core", []):
+        merged[plugin] = True
+
+    # Enable branch-matched plugins
+    for prefix, plugins in profiles.get("branch_modes", {}).items():
+        if branch.startswith(prefix):
+            for plugin in plugins:
+                merged[plugin] = True
+
+    # Check if anything changed (managed plugins only)
+    old_managed = {p: existing.get(p, False) for p in managed}
+    new_managed = {p: merged[p] for p in managed}
+    changed = old_managed != new_managed
+
+    settings["enabledPlugins"] = merged
+
+    # Atomic write: temp file + rename
+    dir_name = os.path.dirname(settings_path)
+    fd, tmp_path = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
+    with os.fdopen(fd, "w") as f:
+        json.dump(settings, f, indent=2)
+        f.write("\n")
+    os.replace(tmp_path, settings_path)
+
+    enabled_count = sum(1 for v in merged.values() if v)
+    print(f'Plugin mode: branch "{branch}" — enabled {enabled_count} plugins')
+    if changed:
+        print("Plugins changed — restart session (new chat) for changes to take effect")
+
+except Exception as e:
+    print(f"WARN: plugin auto-switch failed: {e}")
+PYEOF
 
 exit 0

@@ -6,7 +6,8 @@ set -euo pipefail
 
 INPUT=$(cat)
 
-FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null || echo "")
+# Extract file_path from JSON without jq — pure grep/sed
+FILE=$(echo "$INPUT" | grep -o '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"file_path"[[:space:]]*:[[:space:]]*"//;s/"$//' || echo "")
 
 if [ -z "$FILE" ]; then
   exit 0

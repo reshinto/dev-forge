@@ -34,17 +34,9 @@ BRANCH_TYPES_JSON="$PROJECT_DIR/.claude/hooks/branch-types.json"
 
 DEFAULT_TYPES="feat fix chore refactor docs test ci"
 
-if [ -f "$BRANCH_TYPES_JSON" ] && command -v node &>/dev/null; then
-  VALID_TYPES=$(node -e "
-    const fs = require('fs');
-    try {
-      const config = JSON.parse(fs.readFileSync(process.argv[1], 'utf8'));
-      const types = Array.isArray(config.types) ? config.types : Object.keys(config.types || {});
-      console.log(types.join(' '));
-    } catch (err) {
-      console.log('');
-    }
-  " "$BRANCH_TYPES_JSON" 2>/dev/null || echo "")
+if [ -f "$BRANCH_TYPES_JSON" ]; then
+  # Extract types from JSON array: ["feat", "fix", ...] → "feat fix ..."
+  VALID_TYPES=$(grep -o '"[a-zA-Z_-]*"' "$BRANCH_TYPES_JSON" 2>/dev/null | tr -d '"' | tr '\n' ' ' | sed 's/ *$//' || echo "")
 
   if [ -z "$VALID_TYPES" ]; then
     VALID_TYPES="$DEFAULT_TYPES"

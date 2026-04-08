@@ -15,7 +15,6 @@ A Claude Code plugin that provides a structured set of agents, skills, and hooks
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
 - Git
-- `jq` (used by hook scripts to parse tool input; hooks skip gracefully if missing)
 
 ## Quick Start
 

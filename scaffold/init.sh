@@ -24,6 +24,17 @@ ok()    { echo -e "${GREEN}[ok]${NC} $1"; }
 warn()  { echo -e "${YELLOW}[warn]${NC} $1"; }
 error() { echo -e "${RED}[error]${NC} $1"; }
 
+# Helper: extract a simple JSON string value by key (no jq dependency)
+# Usage: json_get "key" "file.json" → value (without quotes)
+json_get() {
+  grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" "$2" 2>/dev/null | head -1 | sed "s/.*\"$1\"[[:space:]]*:[[:space:]]*\"//;s/\"$//" || echo ""
+}
+
+# Helper: check if a JSON key exists in a file
+json_has() {
+  grep -q "\"$1\"" "$2" 2>/dev/null
+}
+
 # ---- Guard: don't overwrite existing .claude/ ----
 
 if [ -d "$CLAUDE_DIR" ]; then
@@ -50,7 +61,7 @@ echo ""
 # Auto-detect project name
 AUTO_NAME=""
 if [ -f "$TARGET_DIR/package.json" ]; then
-  AUTO_NAME=$(jq -r '.name // empty' "$TARGET_DIR/package.json" 2>/dev/null || true)
+  AUTO_NAME=$(json_get "name" "$TARGET_DIR/package.json")
 elif [ -f "$TARGET_DIR/pyproject.toml" ]; then
   AUTO_NAME=$(grep -m1 '^name' "$TARGET_DIR/pyproject.toml" | sed 's/.*= *"//;s/"//' || true)
 elif [ -f "$TARGET_DIR/Cargo.toml" ]; then
@@ -165,17 +176,12 @@ if [[ "$PRIMARY_LANGUAGE" == "TypeScript" || "$PRIMARY_LANGUAGE" == "JavaScript"
 
   # Auto-detect commands from package.json
   if [ -f "$TARGET_DIR/package.json" ]; then
-    LINT_CMD=$(jq -r '.scripts.lint // empty' "$TARGET_DIR/package.json" 2>/dev/null | head -1)
-    [ -n "$LINT_CMD" ] && LINT_CMD="npm run lint"
-    FORMAT_CMD=$(jq -r '.scripts.format // empty' "$TARGET_DIR/package.json" 2>/dev/null | head -1)
-    [ -n "$FORMAT_CMD" ] && FORMAT_CMD="npm run format"
-    TEST_CMD=$(jq -r '.scripts.test // empty' "$TARGET_DIR/package.json" 2>/dev/null | head -1)
-    [ -n "$TEST_CMD" ] && TEST_CMD="npm run test"
+    json_has "lint" "$TARGET_DIR/package.json" && LINT_CMD="npm run lint"
+    json_has "format" "$TARGET_DIR/package.json" && FORMAT_CMD="npm run format"
+    json_has "test" "$TARGET_DIR/package.json" && TEST_CMD="npm run test"
     TYPECHECK_CMD="npx tsc --noEmit"
-    E2E_CMD=$(jq -r '.scripts.e2e // .scripts["test:e2e"] // empty' "$TARGET_DIR/package.json" 2>/dev/null | head -1)
-    [ -n "$E2E_CMD" ] && E2E_CMD="npm run e2e"
-    STORYBOOK_BUILD_CMD=$(jq -r '.scripts["build-storybook"] // empty' "$TARGET_DIR/package.json" 2>/dev/null | head -1)
-    [ -n "$STORYBOOK_BUILD_CMD" ] && STORYBOOK_BUILD_CMD="npm run build-storybook"
+    json_has "e2e" "$TARGET_DIR/package.json" && E2E_CMD="npm run e2e"
+    json_has "build-storybook" "$TARGET_DIR/package.json" && STORYBOOK_BUILD_CMD="npm run build-storybook"
   fi
 fi
 
@@ -309,12 +315,8 @@ COVERAGE_LINES="${COVERAGE_LINES:-80}"
 # ---- Detect forge plugin identifier ----
 
 FORGE_PLUGIN_ID="claude-forge@local"
-if command -v node &>/dev/null && [ -f "$HOME/.claude/plugins/installed_plugins.json" ]; then
-  DETECTED_ID=$(node -e "
-    const data = JSON.parse(require('fs').readFileSync('$HOME/.claude/plugins/installed_plugins.json', 'utf8'));
-    const keys = Object.keys(data.plugins || {}).filter(k => k.startsWith('claude-forge'));
-    if (keys.length > 0) console.log(keys[0]);
-  " 2>/dev/null || true)
+if [ -f "$HOME/.claude/plugins/installed_plugins.json" ]; then
+  DETECTED_ID=$(grep -o '"claude-forge[^"]*"' "$HOME/.claude/plugins/installed_plugins.json" 2>/dev/null | head -1 | tr -d '"' || true)
   [ -n "$DETECTED_ID" ] && FORGE_PLUGIN_ID="$DETECTED_ID"
 fi
 
@@ -426,7 +428,8 @@ ok "hooks/security-patterns.txt"
 
 # ---- Generate .scaffold-meta.json ----
 
-SCAFFOLD_VERSION=$(jq -r '.version' "$SCRIPT_DIR/../.claude-plugin/plugin.json" 2>/dev/null || echo "1.0.0")
+SCAFFOLD_VERSION=$(json_get "version" "$SCRIPT_DIR/../.claude-plugin/plugin.json")
+SCAFFOLD_VERSION="${SCAFFOLD_VERSION:-1.0.0}"
 
 # Compute checksums for all generated files
 CHECKSUMS="{"
