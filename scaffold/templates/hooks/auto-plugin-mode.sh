@@ -6,8 +6,7 @@
 # present in settings.local.json that are NOT in plugin-profiles.json are preserved
 # (merged, not overwritten). This ensures the forge plugin itself is never disabled.
 #
-# Uses Node.js for JSON manipulation (no jq dependency).
-# Always exits 0 — never blocks session start.
+# Uses jq for JSON manipulation. Always exits 0 — never blocks session start.
 
 set -euo pipefail
 
@@ -21,14 +20,13 @@ if [ ! -f "$PROFILES" ]; then
   exit 0
 fi
 
-# Create settings.local.json if it doesn't exist
 if [ ! -f "$SETTINGS" ]; then
   echo '{}' > "$SETTINGS"
 fi
 
-# Guard: Node.js must be available
-if ! command -v node &>/dev/null; then
-  echo "WARN: node not found — plugin auto-switching disabled" >&2
+# Guard: jq must be available
+if ! command -v jq &>/dev/null; then
+  echo "WARN: jq not found — plugin auto-switching disabled" >&2
   exit 0
 fi
 
@@ -43,76 +41,63 @@ if [ -n "${1:-}" ]; then
   BRANCH="$1"
 fi
 
-# Use Node.js to update settings.local.json atomically.
-# Merges managed plugins with any pre-existing unmanaged plugins in the file.
-node -e "
-const fs = require('fs');
+# Build the list of managed plugins (all plugins in profiles)
+MANAGED_PLUGINS=$(jq -r '([.core[], (.branch_modes | to_entries[].value[])] | unique | .[])' "$PROFILES" 2>/dev/null)
 
-const profilesPath = process.argv[1];
-const settingsPath = process.argv[2];
-const branch = process.argv[3];
+if [ -z "$MANAGED_PLUGINS" ]; then
+  echo "WARN: No plugins found in plugin-profiles.json" >&2
+  exit 0
+fi
 
-try {
-  const profiles = JSON.parse(fs.readFileSync(profilesPath, 'utf8'));
-  const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+# Build the list of plugins to enable (core + branch-matched)
+CORE_PLUGINS=$(jq -r '.core[]' "$PROFILES" 2>/dev/null)
+BRANCH_PLUGINS=""
+while IFS= read -r PREFIX; do
+  if [[ "$BRANCH" == "$PREFIX"* ]]; then
+    MATCHED=$(jq -r --arg prefix "$PREFIX" '.branch_modes[$prefix][]' "$PROFILES" 2>/dev/null)
+    BRANCH_PLUGINS="$BRANCH_PLUGINS"$'\n'"$MATCHED"
+  fi
+done < <(jq -r '.branch_modes | keys[]' "$PROFILES" 2>/dev/null)
 
-  // Collect all plugin names managed by this profiles file
-  const managedPlugins = new Set([
-    ...profiles.core,
-    ...Object.values(profiles.branch_modes).flat()
-  ]);
+ENABLED_PLUGINS=$(echo -e "$CORE_PLUGINS\n$BRANCH_PLUGINS" | sort -u | grep -v '^$')
 
-  // Start with existing enabledPlugins, preserving any unmanaged entries
-  // (e.g. the forge plugin itself installed via settings.local.json)
-  const existing = settings.enabledPlugins || {};
-  const merged = {};
+# Build the new enabledPlugins object using jq:
+# 1. Start with existing settings
+# 2. Remove managed plugins from existing enabledPlugins (preserve unmanaged)
+# 3. Add all managed plugins as false
+# 4. Enable core + branch-matched plugins
+MANAGED_JSON=$(echo "$MANAGED_PLUGINS" | jq -Rn '[inputs] | map({(.): false}) | add // {}')
+ENABLED_JSON=$(echo "$ENABLED_PLUGINS" | jq -Rn '[inputs | select(length > 0)] | map({(.): true}) | add // {}')
 
-  // Copy over any plugins NOT in our managed set (preserve unmanaged plugins)
-  for (const [pluginId, enabled] of Object.entries(existing)) {
-    if (!managedPlugins.has(pluginId)) {
-      merged[pluginId] = enabled;
-    }
-  }
+# Merge: existing unmanaged + managed (false) + enabled (true)
+NEW_SETTINGS=$(jq --argjson managed "$MANAGED_JSON" --argjson enabled "$ENABLED_JSON" '
+  # Get existing enabledPlugins, default to {}
+  (.enabledPlugins // {}) as $existing |
+  # Filter out managed plugins from existing (keep unmanaged)
+  ($existing | to_entries | map(select(.key as $k | ($managed | has($k)) | not)) | from_entries) as $unmanaged |
+  # Merge: unmanaged + managed defaults + enabled overrides
+  .enabledPlugins = ($unmanaged + $managed + $enabled)
+' "$SETTINGS" 2>/dev/null)
 
-  // Set all managed plugins to false initially
-  for (const plugin of managedPlugins) merged[plugin] = false;
+if [ -z "$NEW_SETTINGS" ]; then
+  echo "WARN: plugin auto-switch failed — jq merge error" >&2
+  exit 0
+fi
 
-  // Enable core plugins
-  for (const plugin of profiles.core) merged[plugin] = true;
+# Check if anything changed
+OLD_ENABLED=$(jq -r '.enabledPlugins // {}' "$SETTINGS" 2>/dev/null | jq -S '.')
+NEW_ENABLED=$(echo "$NEW_SETTINGS" | jq -S '.enabledPlugins // {}')
 
-  // Enable branch-matched plugins
-  for (const [prefix, plugins] of Object.entries(profiles.branch_modes)) {
-    if (branch.startsWith(prefix)) {
-      for (const plugin of plugins) merged[plugin] = true;
-    }
-  }
+# Atomic write: temp file + rename
+TMP_FILE="$SETTINGS.tmp.$$"
+echo "$NEW_SETTINGS" | jq '.' > "$TMP_FILE"
+mv "$TMP_FILE" "$SETTINGS"
 
-  // Check if anything changed (only compare managed plugin keys for change detection)
-  const oldManaged = {};
-  for (const plugin of managedPlugins) oldManaged[plugin] = (existing[plugin] ?? false);
-  const newManaged = {};
-  for (const plugin of managedPlugins) newManaged[plugin] = merged[plugin];
+ENABLED_COUNT=$(echo "$NEW_SETTINGS" | jq '[.enabledPlugins | to_entries[] | select(.value == true)] | length')
+echo "Plugin mode: branch \"$BRANCH\" — enabled $ENABLED_COUNT plugins"
 
-  const sortedKeys = [...managedPlugins].sort();
-  const oldJson = JSON.stringify(oldManaged, sortedKeys);
-  const newJson = JSON.stringify(newManaged, sortedKeys);
-  const changed = oldJson !== newJson;
-
-  settings.enabledPlugins = merged;
-
-  // Atomic write: temp file + rename
-  const tmpPath = settingsPath + '.tmp.' + process.pid;
-  fs.writeFileSync(tmpPath, JSON.stringify(settings, null, 2) + '\n');
-  fs.renameSync(tmpPath, settingsPath);
-
-  const enabledCount = Object.values(merged).filter(Boolean).length;
-  console.log('Plugin mode: branch \"' + branch + '\" — enabled ' + enabledCount + ' plugins');
-  if (changed) {
-    console.log('Plugins changed — restart session (new chat) for changes to take effect');
-  }
-} catch (err) {
-  console.log('WARN: plugin auto-switch failed: ' + err.message);
-}
-" "$PROFILES" "$SETTINGS" "$BRANCH" 2>&1
+if [ "$OLD_ENABLED" != "$NEW_ENABLED" ]; then
+  echo "Plugins changed — restart session (new chat) for changes to take effect"
+fi
 
 exit 0

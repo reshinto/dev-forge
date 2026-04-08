@@ -15,8 +15,7 @@ A Claude Code plugin that provides a structured set of agents, skills, and hooks
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
 - Git
-- Node.js (required by hook scripts)
-- `jq` (required by hook scripts)
+- `jq` (used by hook scripts to parse tool input; hooks skip gracefully if missing)
 
 ## Quick Start
 
@@ -58,6 +57,7 @@ A Claude Code plugin that provides a structured set of agents, skills, and hooks
 | Update the plugin | [docs/updating.md](docs/updating.md) |
 | Remove the plugin | [docs/uninstalling.md](docs/uninstalling.md) |
 | Contribute | [docs/contributing.md](docs/contributing.md) |
+| Write better prompts | [docs/prompting-guide.md](docs/prompting-guide.md) |
 | Understand internals | [docs/architecture.md](docs/architecture.md) |
 
 ## Agents
