@@ -4,7 +4,7 @@
 
 ## What this covers
 
-Internals of how claude-forge works: the system model, file layout, settings resolution, hook execution, plugin profiles, and the session lifecycle. Intended for contributors and advanced users who need to understand why things behave the way they do.
+Internals of how dev-forge works: the system model, file layout, settings resolution, hook execution, plugin profiles, and the session lifecycle. Intended for contributors and advanced users who need to understand why things behave the way they do.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ Internals of how claude-forge works: the system model, file layout, settings res
 
 ## System model: 4 layers
 
-claude-forge is organized into four layers that compose at runtime:
+dev-forge is organized into four layers that compose at runtime:
 
 | Layer | What it contains | Where it lives |
 |-------|-----------------|----------------|
@@ -30,7 +30,7 @@ Agents and skills are passive: they do nothing until invoked. Hooks are active: 
 ## File layout
 
 ```
-claude-forge/
+dev-forge/
   agents/          # Plugin-side agent definitions (*.md)
   skills/          # Plugin-side skill definitions (*/SKILL.md)
   hooks/           # Hook scripts + hooks.json registry
@@ -66,7 +66,7 @@ Every hook script receives these environment variables from Claude Code:
 |----------|-------|
 | `$CLAUDE_TOOL_INPUT` | JSON string of the triggering tool's input |
 | `$CLAUDE_PROJECT_DIR` | Absolute path to the project root |
-| `$CLAUDE_PLUGIN_ROOT` | Absolute path to the claude-forge plugin directory |
+| `$CLAUDE_PLUGIN_ROOT` | Absolute path to the dev-forge plugin directory |
 
 ### Exit codes
 
@@ -131,6 +131,6 @@ Stop hooks cannot prevent the session from closing. Their exit code is reported 
 
 ## See also
 
-- [Extending claude-forge](./extending.md)
-- [Contributing to claude-forge](./contributing.md)
-- [Updating claude-forge](./updating.md)
+- [Extending dev-forge](./extending.md)
+- [Contributing to dev-forge](./contributing.md)
+- [Updating dev-forge](./updating.md)

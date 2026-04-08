@@ -5,7 +5,7 @@
 Think of an agent like a colleague with a specific expertise. A senior engineer reviews code differently than a QA tester, and a technical writer reads differently than both. Agents give Claude a focused role with a defined set of tools and a maximum turn budget, so each review stays on-task.
 
 > **Prerequisites**
-> - claude-forge installed (see [Getting Started](getting-started.md))
+> - dev-forge installed (see [Getting Started](getting-started.md))
 > - Agents directory registered in your Claude Code plugin settings
 
 ---

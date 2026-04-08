@@ -1,16 +1,16 @@
 [Back to README](../README.md)
 
-# Extending claude-forge
+# Extending dev-forge
 
 ## What this covers
 
-This guide explains how to add your own agents, skills, hooks, and plugin profiles to claude-forge so the plugin fits your project's exact workflow.
+This guide explains how to add your own agents, skills, hooks, and plugin profiles to dev-forge so the plugin fits your project's exact workflow.
 
-Think of claude-forge as a set of defaults. Extending it means layering your own rules on top without touching the plugin's own files — so updates stay clean.
+Think of dev-forge as a set of defaults. Extending it means layering your own rules on top without touching the plugin's own files — so updates stay clean.
 
 ## Prerequisites
 
-> You must have claude-forge installed and a project scaffolded with `scaffold/init.sh` before extending it. See the [README](../README.md) for setup steps.
+> You must have dev-forge installed and a project scaffolded with `scaffold/init.sh` before extending it. See the [README](../README.md) for setup steps.
 
 ---
 
@@ -88,7 +88,7 @@ Always write a diagnostic message to `stderr` before exiting non-zero.
 |----------|-------|
 | `$CLAUDE_TOOL_INPUT` | JSON string of the tool's input parameters |
 | `$CLAUDE_PROJECT_DIR` | Absolute path to the project root |
-| `$CLAUDE_PLUGIN_ROOT` | Absolute path to the claude-forge plugin directory |
+| `$CLAUDE_PLUGIN_ROOT` | Absolute path to the dev-forge plugin directory |
 
 ### Registering in settings.json
 
@@ -119,7 +119,7 @@ Edit `.claude/hooks/plugin-profiles.json`:
 
 ```json
 {
-  "core": ["claude-forge@local", "superpowers"],
+  "core": ["dev-forge@local", "superpowers"],
   "branch_modes": {
     "feat/payments-": ["stripe-docs", "pci-compliance-checker"],
     "feat/infra-":   ["terraform-helper"]
@@ -145,5 +145,5 @@ Edit `.claude/hooks/plugin-profiles.json`:
 ## See also
 
 - [Architecture internals](./architecture.md)
-- [Contributing to claude-forge](./contributing.md)
+- [Contributing to dev-forge](./contributing.md)
 - [Updating the plugin](./updating.md)

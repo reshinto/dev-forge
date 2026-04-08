@@ -1,16 +1,16 @@
 [Back to README](../README.md)
 
-# Uninstalling claude-forge
+# Uninstalling dev-forge
 
 ## What this covers
 
-How to remove claude-forge from a project, either fully or partially. Partial removal is useful if you want to keep some agents or skills but drop specific hooks.
+How to remove dev-forge from a project, either fully or partially. Partial removal is useful if you want to keep some agents or skills but drop specific hooks.
 
-claude-forge is non-invasive: it installs into `.claude/` inside your project and registers itself as a Claude Code plugin. Nothing is written outside those two locations.
+dev-forge is non-invasive: it installs into `.claude/` inside your project and registers itself as a Claude Code plugin. Nothing is written outside those two locations.
 
 ## Prerequisites
 
-> You need an existing claude-forge installation to have something to remove. This guide assumes you ran `scaffold/init.sh` at some point.
+> You need an existing dev-forge installation to have something to remove. This guide assumes you ran `scaffold/init.sh` at some point.
 
 ---
 
@@ -20,9 +20,9 @@ claude-forge is non-invasive: it installs into `.claude/` inside your project an
 |----------|----------|-----------------------|
 | Scaffolded `.claude/` files | `<project>/.claude/` | Yes — manual deletion |
 | Plugin registration | Claude Code plugin store | Yes — `claude plugin remove` |
-| Hook scripts (plugin-side) | `<claude-forge>/hooks/` | Yes — with plugin removal |
-| Agents (plugin-side) | `<claude-forge>/agents/` | Yes — with plugin removal |
-| Skills (plugin-side) | `<claude-forge>/skills/` | Yes — with plugin removal |
+| Hook scripts (plugin-side) | `<dev-forge>/hooks/` | Yes — with plugin removal |
+| Agents (plugin-side) | `<dev-forge>/agents/` | Yes — with plugin removal |
+| Skills (plugin-side) | `<dev-forge>/skills/` | Yes — with plugin removal |
 | Custom agents you added | `<project>/.claude/agents/` | Only if you delete `.claude/` |
 | Custom skills you added | `<project>/.claude/skills/` | Only if you delete `.claude/` |
 | Your source code | Anywhere | Never touched |
@@ -34,7 +34,7 @@ claude-forge is non-invasive: it installs into `.claude/` inside your project an
 ### Step 1 — Remove the plugin from Claude Code
 
 ```bash
-claude plugin remove claude-forge
+claude plugin remove dev-forge
 ```
 
 This removes the plugin registration and all plugin-side agents, skills, and hook scripts.
@@ -92,7 +92,7 @@ Edit `.claude/hooks/plugin-profiles.json` and remove the entries you no longer w
 
 | Artifact | Command to remove |
 |----------|-------------------|
-| Plugin registration | `claude plugin remove claude-forge` |
+| Plugin registration | `claude plugin remove dev-forge` |
 | All scaffolded files | `rm -rf .claude/` |
 | Single hook script | `rm .claude/hooks/<name>.sh` |
 | Hook settings entry | Edit `.claude/settings.json` manually |
@@ -107,7 +107,7 @@ Edit `.claude/hooks/plugin-profiles.json` and remove the entries you no longer w
 After uninstalling, confirm the following:
 
 1. `ls .claude/` returns empty or "No such file or directory"
-2. `claude plugin list` does not show `claude-forge`
+2. `claude plugin list` does not show `dev-forge`
 3. Starting a new Claude Code session produces no hook-related output
 4. Any references to `${CLAUDE_PLUGIN_ROOT}` in remaining config files have been cleaned up
 
@@ -115,6 +115,6 @@ After uninstalling, confirm the following:
 
 ## See also
 
-- [Updating claude-forge](./updating.md)
-- [Extending claude-forge](./extending.md)
+- [Updating dev-forge](./updating.md)
+- [Extending dev-forge](./extending.md)
 - [README](../README.md)

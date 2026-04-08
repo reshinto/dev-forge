@@ -1,16 +1,16 @@
 [Back to README](../README.md)
 
-# Updating claude-forge
+# Updating dev-forge
 
 ## What this covers
 
-How to keep both the plugin itself and your scaffolded project files current as claude-forge evolves.
+How to keep both the plugin itself and your scaffolded project files current as dev-forge evolves.
 
 There are two separate things that update independently. Confusing them is the most common mistake.
 
 ## Prerequisites
 
-> You need an existing claude-forge installation and a project that was scaffolded with `scaffold/init.sh`. If you haven't scaffolded yet, see the [README](../README.md).
+> You need an existing dev-forge installation and a project that was scaffolded with `scaffold/init.sh`. If you haven't scaffolded yet, see the [README](../README.md).
 
 ---
 
@@ -18,7 +18,7 @@ There are two separate things that update independently. Confusing them is the m
 
 | Thing | What it is | How to update |
 |-------|------------|---------------|
-| **Plugin** | The agents, skills, and hooks that claude-forge itself ships | Re-clone or `claude plugin update` |
+| **Plugin** | The agents, skills, and hooks that dev-forge itself ships | Re-clone or `claude plugin update` |
 | **Scaffold** | The `.claude/` files generated into your project | `bash scaffold/update.sh` |
 
 The plugin and the scaffold version together. If you update the plugin but not the scaffold, your project files may be out of date, and vice versa.
@@ -30,7 +30,7 @@ The plugin and the scaffold version together. If you update the plugin but not t
 ### Via Claude Code plugin manager
 
 ```bash
-claude plugin update claude-forge
+claude plugin update dev-forge
 ```
 
 This pulls the latest agents, skills, and hook scripts from the plugin source.
@@ -40,7 +40,7 @@ This pulls the latest agents, skills, and hook scripts from the plugin source.
 If you installed by cloning the repo directly:
 
 ```bash
-cd /path/to/claude-forge
+cd /path/to/dev-forge
 git pull origin main
 ```
 
@@ -53,7 +53,7 @@ Then restart any active Claude Code sessions so the updated agents and skills ar
 Run the update script from inside your project directory:
 
 ```bash
-bash /path/to/claude-forge/scaffold/update.sh
+bash /path/to/dev-forge/scaffold/update.sh
 ```
 
 Or, if you have the scaffold path in your project:
@@ -98,10 +98,10 @@ Key fields:
 
 ## Checking for breaking changes
 
-Before updating, read `CHANGELOG.md` in the claude-forge repo:
+Before updating, read `CHANGELOG.md` in the dev-forge repo:
 
 ```bash
-cat /path/to/claude-forge/CHANGELOG.md
+cat /path/to/dev-forge/CHANGELOG.md
 ```
 
 Look for `### Breaking` or `### Changed` sections under the target version. Common breaking changes include:
@@ -116,6 +116,6 @@ When in doubt, let the updater show you the diff before accepting any changes.
 
 ## See also
 
-- [Extending claude-forge](./extending.md)
+- [Extending dev-forge](./extending.md)
 - [Uninstalling](./uninstalling.md)
 - [Architecture internals](./architecture.md)

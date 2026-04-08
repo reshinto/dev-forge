@@ -5,7 +5,7 @@
 Think of a skill like a saved playbook or checklist. Instead of typing out a long set of instructions every time you want to run a code review or set up a TDD cycle, you invoke the skill by name and Claude follows the predefined steps automatically.
 
 > **Prerequisites**
-> - claude-forge installed and skills registered (see [Getting Started](getting-started.md))
+> - dev-forge installed and skills registered (see [Getting Started](getting-started.md))
 > - A Claude Code session open in your project
 
 ---
@@ -40,7 +40,7 @@ Claude Code matches the name to the installed skill file and loads its instructi
 | `documentation-review` | Review docs for clarity, ELI5 accessibility, structure, and onboarding quality | At PR time when docs changed |
 | `readme-optimization` | Optimize README for GitHub discoverability and accurate feature positioning | Before a public release or repo restructure |
 | `branch-safety-check` | Confirm the current branch is a unique task branch; create one if needed | At the start of any new task |
-| `claude-system-management` | Create, update, and audit `.claude/` config: agents, skills, memory, rules, hooks | When maintaining or extending the claude-forge setup itself |
+| `claude-system-management` | Create, update, and audit `.claude/` config: agents, skills, memory, rules, hooks | When maintaining or extending the dev-forge setup itself |
 
 ---
 

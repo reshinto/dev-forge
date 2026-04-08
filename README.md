@@ -1,4 +1,4 @@
-# claude-forge
+# dev-forge
 
 A Claude Code plugin that provides a structured set of agents, skills, and hooks for software development workflows. It enforces branch hygiene, code quality gates, and accessibility standards automatically, and gives you named agents and reusable slash commands to run reviews, audits, and planning tasks on demand.
 
@@ -20,12 +20,12 @@ A Claude Code plugin that provides a structured set of agents, skills, and hooks
 
 1. Install the plugin:
    ```sh
-   claude plugin add --from-git https://github.com/reshinto/claude-forge
+   claude plugin add --from-git https://github.com/reshinto/dev-forge
    ```
 
 2. Run the project scaffold:
    ```sh
-   git clone https://github.com/reshinto/claude-forge /tmp/claude-forge && bash /tmp/claude-forge/scaffold/init.sh
+   git clone https://github.com/reshinto/dev-forge /tmp/dev-forge && bash /tmp/dev-forge/scaffold/init.sh
    ```
 
 3. Open a Claude Code session in your project.

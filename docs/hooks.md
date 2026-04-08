@@ -2,10 +2,10 @@
 
 # Hooks
 
-Think of hooks like automatic safety checks — similar to a smoke detector. You do not have to remember to check for smoke; the detector fires the moment conditions are met. claude-forge hooks run automatically at defined points in a Claude Code session to catch problems before they land in your codebase.
+Think of hooks like automatic safety checks — similar to a smoke detector. You do not have to remember to check for smoke; the detector fires the moment conditions are met. dev-forge hooks run automatically at defined points in a Claude Code session to catch problems before they land in your codebase.
 
 > **Prerequisites**
-> - claude-forge installed and `hooks.json` registered in `.claude/settings.json` (see [Getting Started](getting-started.md))
+> - dev-forge installed and `hooks.json` registered in `.claude/settings.json` (see [Getting Started](getting-started.md))
 
 ---
 
@@ -20,7 +20,7 @@ Claude Code supports four hook events:
 | `PostToolUse` | After Claude executes a matched tool call |
 | `Stop` | When the session ends or Claude finishes its last response |
 
-claude-forge uses `SessionStart`, `PreToolUse`, and `PostToolUse`. There is no `Stop` hook registered by default, but `session-end-unified-gate.sh` is available to run manually or via a shell alias.
+dev-forge uses `SessionStart`, `PreToolUse`, and `PostToolUse`. There is no `Stop` hook registered by default, but `session-end-unified-gate.sh` is available to run manually or via a shell alias.
 
 ---
 
@@ -57,8 +57,8 @@ Plugin profiles are defined in `.claude/hooks/plugin-profiles.json`. Each profil
 ```json
 {
   "profiles": [
-    { "pattern": "feat/", "plugins": ["claude-forge"] },
-    { "pattern": "fix/",  "plugins": ["claude-forge"] }
+    { "pattern": "feat/", "plugins": ["dev-forge"] },
+    { "pattern": "fix/",  "plugins": ["dev-forge"] }
   ]
 }
 ```
@@ -96,7 +96,7 @@ If a hook blocks unexpectedly:
 1. Read the error message printed by the hook — it describes what was checked and why it failed.
 2. Run the hook script directly to see its full output:
    ```bash
-   bash .claude/plugins/claude-forge/hooks/block-main-branch-commits.sh
+   bash .claude/plugins/dev-forge/hooks/block-main-branch-commits.sh
    ```
 3. Check the hook's matcher in `hooks/hooks.json` to confirm it matches the tool call you made.
 4. If the hook is incorrectly blocking, adjust the matcher or the script — see [Customization](customization.md) for how to override hooks without modifying the plugin source.

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# claude-forge scaffold: Interactive project setup for .claude/ configuration.
+# dev-forge scaffold: Interactive project setup for .claude/ configuration.
 # Generates CLAUDE.md, rules, hooks, and settings based on project type.
 #
-# Usage: bash /path/to/claude-forge/scaffold/init.sh [target-dir]
+# Usage: bash /path/to/dev-forge/scaffold/init.sh [target-dir]
 # If target-dir is omitted, uses the current directory.
 
 set -euo pipefail
@@ -48,7 +48,7 @@ fi
 
 echo ""
 echo "============================================"
-echo "  claude-forge scaffold"
+echo "  dev-forge scaffold"
 echo "  Project setup for Claude Code"
 echo "============================================"
 echo ""
@@ -314,9 +314,9 @@ COVERAGE_LINES="${COVERAGE_LINES:-80}"
 
 # ---- Detect forge plugin identifier ----
 
-FORGE_PLUGIN_ID="claude-forge@local"
+FORGE_PLUGIN_ID="dev-forge@local"
 if [ -f "$HOME/.claude/plugins/installed_plugins.json" ]; then
-  DETECTED_ID=$(grep -o '"claude-forge[^"]*"' "$HOME/.claude/plugins/installed_plugins.json" 2>/dev/null | head -1 | tr -d '"' || true)
+  DETECTED_ID=$(grep -o '"dev-forge[^"]*"' "$HOME/.claude/plugins/installed_plugins.json" 2>/dev/null | head -1 | tr -d '"' || true)
   [ -n "$DETECTED_ID" ] && FORGE_PLUGIN_ID="$DETECTED_ID"
 fi
 
@@ -450,7 +450,7 @@ cat > "$CLAUDE_DIR/.scaffold-meta.json" << METAEOF
 {
   "version": "$SCAFFOLD_VERSION",
   "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "source": "claude-forge",
+  "source": "dev-forge",
   "forge_plugin_id": "$FORGE_PLUGIN_ID",
   "project_type": "$PROJECT_TYPE",
   "primary_language": "$PRIMARY_LANGUAGE",
@@ -463,7 +463,7 @@ ok ".scaffold-meta.json"
 
 echo ""
 echo "============================================"
-echo "  claude-forge scaffold complete!"
+echo "  dev-forge scaffold complete!"
 echo "============================================"
 echo ""
 info "Generated $(find "$CLAUDE_DIR" -type f | wc -l | tr -d ' ') files in $CLAUDE_DIR/"

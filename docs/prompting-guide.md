@@ -2,11 +2,11 @@
 
 # Prompting Guide
 
-How to write effective prompts and trigger the full range of capabilities in claude-forge and companion plugins.
+How to write effective prompts and trigger the full range of capabilities in dev-forge and companion plugins.
 
 ## Prerequisites
 
-- claude-forge installed ([getting started](getting-started.md))
+- dev-forge installed ([getting started](getting-started.md))
 - Familiarity with [skills](skills.md) and [agents](agents.md)
 
 ---
@@ -58,7 +58,7 @@ Constraints:
 
 ---
 
-## Triggering claude-forge Skills
+## Triggering dev-forge Skills
 
 Invoke any skill by typing its name as a slash command:
 
@@ -80,7 +80,7 @@ Invoke any skill by typing its name as a slash command:
 
 ---
 
-## Triggering claude-forge Agents
+## Triggering dev-forge Agents
 
 Use agents when you need a specific reviewer's perspective:
 
@@ -113,7 +113,7 @@ Run the qa-tester agent to validate test coverage.
 
 ## Triggering Companion Plugin Skills
 
-If you have companion plugins installed alongside claude-forge, here's how to trigger their key capabilities:
+If you have companion plugins installed alongside dev-forge, here's how to trigger their key capabilities:
 
 ### superpowers (if installed)
 

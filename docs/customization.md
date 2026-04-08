@@ -2,10 +2,10 @@
 
 # Customization
 
-claude-forge is designed to be adapted. Project-level files always take precedence over plugin-level files. You can override individual skills, extend rules, disable specific hooks, and layer additional plugins alongside claude-forge — all without modifying the plugin source.
+dev-forge is designed to be adapted. Project-level files always take precedence over plugin-level files. You can override individual skills, extend rules, disable specific hooks, and layer additional plugins alongside dev-forge — all without modifying the plugin source.
 
 > **Prerequisites**
-> - claude-forge installed and scaffold complete (see [Getting Started](getting-started.md))
+> - dev-forge installed and scaffold complete (see [Getting Started](getting-started.md))
 
 ---
 
@@ -13,7 +13,7 @@ claude-forge is designed to be adapted. Project-level files always take preceden
 
 When Claude Code loads configuration, it merges files in this order (later entries win):
 
-1. Plugin defaults (inside the `claude-forge` plugin directory)
+1. Plugin defaults (inside the `dev-forge` plugin directory)
 2. Project `.claude/` files (in your repository)
 3. Local overrides (`.claude/settings.local.json`, gitignored)
 
@@ -96,13 +96,13 @@ Delete the hook object you want to disable. Your `settings.json` is project-owne
 
 ---
 
-## Adding Plugins Alongside claude-forge
+## Adding Plugins Alongside dev-forge
 
 Multiple plugins can be active in the same session. Register additional plugins in `.claude/settings.json` under the `plugins` key:
 
 ```json
 {
-  "plugins": ["claude-forge", "my-other-plugin"]
+  "plugins": ["dev-forge", "my-other-plugin"]
 }
 ```
 
@@ -113,7 +113,7 @@ Plugin profiles in `.claude/hooks/plugin-profiles.json` can also include additio
 ```json
 {
   "profiles": [
-    { "pattern": "feat/", "plugins": ["claude-forge", "my-other-plugin"] }
+    { "pattern": "feat/", "plugins": ["dev-forge", "my-other-plugin"] }
   ]
 }
 ```

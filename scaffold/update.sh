@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# claude-forge scaffold updater: diff-based update of scaffolded project files.
+# dev-forge scaffold updater: diff-based update of scaffolded project files.
 # Compares current files against new templates, auto-updates unmodified files,
 # and shows diffs for user-modified files.
 #
-# Usage: bash /path/to/claude-forge/scaffold/update.sh [target-dir]
+# Usage: bash /path/to/dev-forge/scaffold/update.sh [target-dir]
 # No external dependencies — uses Python (pre-installed on macOS/Linux) for JSON.
 
 set -euo pipefail
@@ -44,7 +44,7 @@ fi
 
 if [ ! -f "$META_FILE" ]; then
   error "No .scaffold-meta.json found in $CLAUDE_DIR/"
-  echo "This project was not scaffolded with claude-forge, or the meta file was deleted."
+  echo "This project was not scaffolded with dev-forge, or the meta file was deleted."
   echo "Run scaffold/init.sh instead."
   exit 1
 fi
@@ -57,7 +57,7 @@ NEW_VERSION="${NEW_VERSION:-unknown}"
 
 echo ""
 echo "============================================"
-echo "  claude-forge scaffold update"
+echo "  dev-forge scaffold update"
 echo "============================================"
 echo ""
 info "Current scaffold version: $CURRENT_VERSION"

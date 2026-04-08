@@ -1,12 +1,12 @@
 [Back to README](../README.md)
 
-# Contributing to claude-forge
+# Contributing to dev-forge
 
 ## What this covers
 
-How to contribute new agents, skills, hooks, and scaffold templates to the claude-forge project itself. This is for changes to the plugin — not changes to your own project's `.claude/` directory.
+How to contribute new agents, skills, hooks, and scaffold templates to the dev-forge project itself. This is for changes to the plugin — not changes to your own project's `.claude/` directory.
 
-For adding extensions to your own project only, see [Extending claude-forge](./extending.md).
+For adding extensions to your own project only, see [Extending dev-forge](./extending.md).
 
 ## Prerequisites
 
@@ -17,8 +17,8 @@ For adding extensions to your own project only, see [Extending claude-forge](./e
 ## Development setup
 
 ```bash
-git clone https://github.com/<org>/claude-forge.git
-cd claude-forge
+git clone https://github.com/<org>/dev-forge.git
+cd dev-forge
 ```
 
 No build step is required. All agents, skills, and hooks are plain text files or shell scripts.
@@ -74,7 +74,7 @@ print('Frontmatter OK')
 6. Add a CHANGELOG entry.
 7. Open a PR. Include a short example session showing the skill being invoked.
 
-Skills should be self-contained instruction sets. Do not embed project-specific logic — skills must work across any project that installs claude-forge.
+Skills should be self-contained instruction sets. Do not embed project-specific logic — skills must work across any project that installs dev-forge.
 
 ---
 
@@ -106,5 +106,5 @@ Every hook must handle the case where it is run outside a git repository gracefu
 ## See also
 
 - [Architecture internals](./architecture.md)
-- [Extending claude-forge](./extending.md)
+- [Extending dev-forge](./extending.md)
 - [CHANGELOG](../CHANGELOG.md)
