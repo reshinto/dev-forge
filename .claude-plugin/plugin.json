@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "author": {
     "name": "Terence",
-    "email": "terence@springfield.dev"
+    "email": "terencekong2002@gmail.com"
   },
-  "homepage": "https://github.com/springfield/claude-forge",
-  "repository": "https://github.com/springfield/claude-forge",
+  "homepage": "https://github.com/reshinto/claude-forge",
+  "repository": "https://github.com/reshinto/claude-forge",
   "license": "MIT",
   "keywords": [
     "claude-code",
