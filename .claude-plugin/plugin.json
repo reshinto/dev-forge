@@ -1,0 +1,24 @@
+{
+  "name": "claude-forge",
+  "description": "Development toolkit for Claude Code: specialized review agents, workflow skills, and automated quality hooks for any project",
+  "version": "1.0.0",
+  "author": {
+    "name": "Terence",
+    "email": "terence@springfield.dev"
+  },
+  "homepage": "https://github.com/springfield/claude-forge",
+  "repository": "https://github.com/springfield/claude-forge",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "agents",
+    "skills",
+    "hooks",
+    "code-review",
+    "tdd",
+    "debugging",
+    "workflow",
+    "quality-gates"
+  ]
+}
