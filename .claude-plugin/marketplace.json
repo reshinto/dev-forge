@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "dev-forge",
-      "source": ".",
+      "source": "./",
       "description": "Development toolkit for Claude Code: specialized review agents, workflow skills, and automated quality hooks for any project",
       "version": "1.0.0",
       "author": {
