@@ -54,13 +54,15 @@ If a `.claude/` directory already exists, the script will ask whether to overwri
 
 The scaffold runs through four stages. Each stage auto-detects values where possible and lets you confirm or override them.
 
+**Pressing Enter without typing anything** accepts the default value shown in brackets. You can press Enter through every prompt and get a working configuration based on auto-detected values.
+
 ### Stage 1: Project Identity
 
-| Prompt | What it does |
-|--------|-------------|
-| **Project name** | Auto-detected from `package.json`, `pyproject.toml`, `Cargo.toml`, or `go.mod`. Falls back to the directory name. |
-| **One-line description** | Free text. Used in the generated `CLAUDE.md`. |
-| **Project type** | Choose from: Web Frontend, Full-Stack Web, Backend API, CLI Tool, Library, or Other. This determines which optional rule files are generated (e.g., UI/UX rules for frontend projects). |
+| Prompt | Default (Enter) | What it does |
+|--------|-----------------|-------------|
+| **Project name** | Auto-detected from `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, or directory name | Sets the project name in `CLAUDE.md`. |
+| **One-line description** | `<project-name> project` | Sets the project description in `CLAUDE.md`. |
+| **Project type** | `Other` (no frontend/backend-specific rules generated) | Determines which optional rule files are generated (e.g., `ui-ux.md` for frontend projects). |
 
 Example:
 
@@ -72,8 +74,8 @@ Example:
 
 [info] Stage 1: Project Identity
 
-Project name [my-app]: my-app
-One-line description: A full-stack task management app with real-time updates
+Project name [my-app]:
+One-line description [my-app project]:
 
 Project type:
   1) Web Frontend (React, Vue, Svelte, etc.)
@@ -87,9 +89,9 @@ Select [1-6]: 2
 
 ### Stage 2: Language & Runtime
 
-| Prompt | What it does |
-|--------|-------------|
-| **Primary language** | Choose from: TypeScript, JavaScript, Python, Go, Rust, Java/Kotlin, C/C++, or Other. Auto-detected from config files in the project root. |
+| Prompt | Default (Enter) | What it does |
+|--------|-----------------|-------------|
+| **Primary language** | Auto-detected language (e.g., TypeScript if `tsconfig.json` exists, Python if `pyproject.toml` exists). If no language is detected, prompts for a name. | Sets default lint, format, typecheck, and test commands. |
 
 The language selection determines default commands for linting, formatting, type checking, and testing.
 
@@ -117,29 +119,29 @@ Prompts in this stage vary based on your project type and language.
 
 **For TypeScript/JavaScript projects:**
 
-| Prompt | Default |
-|--------|---------|
+| Prompt | Default (Enter) |
+|--------|-----------------|
 | Import alias | `none` (options: `@/`, `~/`, `none`) |
 
 **For frontend projects (Web Frontend or Full-Stack):**
 
-| Prompt | Default |
-|--------|---------|
+| Prompt | Default (Enter) |
+|--------|-----------------|
 | CSS framework | `None` (options: Tailwind, CSS Modules, None) |
 | State management | `None` (options: Zustand, Redux, Jotai, None) |
-| Include Storybook? | No |
+| Include Storybook? | `No` |
 | E2E runner | `None` (options: Playwright, Cypress, None) |
 
 **For all projects:**
 
-| Prompt | Default |
-|--------|---------|
+| Prompt | Default (Enter) |
+|--------|-----------------|
 | Lint command | Auto-detected per language (e.g., `npm run lint`, `ruff check .`, `golangci-lint run`) |
 | Format command | Auto-detected per language (e.g., `npm run format`, `black .`, `gofmt -w .`) |
 | Type check command | Auto-detected per language (e.g., `npx tsc --noEmit`, `mypy .`, `go vet ./...`) |
 | Test command | Auto-detected per language (e.g., `npm run test`, `pytest`, `go test ./...`) |
 | Coverage thresholds | `80/75/80/80` (statements/branches/functions/lines) |
-| Include Docker/CI-CD rules? | No |
+| Include Docker/CI-CD rules? | `No` |
 
 Example (Full-Stack TypeScript project):
 
@@ -176,10 +178,10 @@ Include Docker/CI-CD rules? [y/N]: y
 
 ### Stage 4: Architecture
 
-| Prompt | What it does |
-|--------|-------------|
-| **Architecture summary** | 1-2 sentences describing your architecture. Written into `CLAUDE.md`. |
-| **Key directories** | Auto-detected from common directory names (`src/`, `lib/`, `app/`, `tests/`, etc.). You can override with a comma-separated list. |
+| Prompt | Default (Enter) | What it does |
+|--------|-----------------|-------------|
+| **Architecture summary** | `Describe your architecture here. See rules/architecture.md.` | Written into `CLAUDE.md`. |
+| **Key directories** | Auto-detected directories (`src/`, `lib/`, `app/`, `tests/`, etc.) | Listed in `CLAUDE.md` as key project paths. |
 
 Example:
 
@@ -294,6 +296,38 @@ After answering the prompts, the scaffold creates the following files inside `.c
 | `hooks/session-end-claude-system-check.sh` | Validates .claude/ config consistency (agent/skill frontmatter, hook references). |
 | `hooks/security-patterns.txt` | Patterns used by the security scan hook. |
 | `.scaffold-meta.json` | Version, checksums, and metadata for future updates. |
+
+---
+
+## Where your input goes
+
+Every answer you provide during scaffolding is substituted into the generated files via template variables. Here is the full mapping:
+
+| Your input | Generated files it appears in |
+|------------|-------------------------------|
+| **Project name** | `CLAUDE.md`, `rules/docs.md` |
+| **One-line description** | `CLAUDE.md` |
+| **Primary language** | `CLAUDE.md`, `rules/coding-standards.md`, agent descriptions, skill descriptions |
+| **Tech stack** (language + frameworks) | `CLAUDE.md` |
+| **Test runner** (auto-detected from language) | `rules/testing.md`, `agents/qa-tester.md`, `skills/tdd/SKILL.md` |
+| **Test command** | `hooks/session-end-unified-gate.sh`, `skills/security-coverage-audit/SKILL.md`, `skills/verification/SKILL.md`, `agents/qa-tester.md` |
+| **Lint command** | `hooks/session-end-unified-gate.sh`, `agents/qa-tester.md`, `settings.local.json` |
+| **Format command** | `hooks/session-end-unified-gate.sh`, `agents/qa-tester.md`, `settings.local.json` |
+| **Type check command** | `hooks/session-end-unified-gate.sh`, `agents/qa-tester.md`, `settings.local.json` |
+| **E2E runner** | `rules/testing.md`, `rules/docker-ci-cd.md`, `agents/qa-tester.md`, `skills/tdd/SKILL.md` |
+| **E2E command** (auto-detected) | `hooks/session-end-unified-gate.sh`, `skills/security-coverage-audit/SKILL.md` |
+| **Coverage thresholds** | `rules/testing.md` |
+| **CSS framework** | `rules/ui-ux.md` (frontend projects only) |
+| **State management** | `rules/ui-ux.md` (frontend projects only) |
+| **Import alias** | `rules/coding-standards.md` (TypeScript/JavaScript only) |
+| **Architecture summary** | `CLAUDE.md` |
+| **Key directories** | `CLAUDE.md` |
+| **Storybook build command** (auto-detected) | `hooks/session-end-unified-gate.sh` |
+| **Installed plugins** (auto-detected) | `settings.json` (all enabled), `settings.local.json` (core only) |
+| **Plugin ID** (auto-detected) | `hooks/plugin-profiles.json` |
+| **Include Docker/CI-CD** | Controls whether `rules/docker-ci-cd.md` is generated |
+| **Include Storybook** | Controls whether storybook build is part of the quality gate |
+| **Project type** | Controls whether `rules/ui-ux.md` is generated (frontend/full-stack only) |
 
 ---
 

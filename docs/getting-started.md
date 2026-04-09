@@ -53,20 +53,11 @@ This loads the plugin for the current session only and does not persist across s
 
 ---
 
-## Running init.sh
+## Running the scaffold
 
-After installation, scaffold your project's `.claude/` directory:
+After installation, run the scaffold to generate your project's `.claude/` directory. See the [Scaffold guide](scaffold.md) for detailed step-by-step instructions and example prompts.
 
-```bash
-# If installed from marketplace
-DEV_FORGE_PATH=$(grep -o '"installPath": *"[^"]*"' ~/.claude/plugins/installed_plugins.json | grep dev-forge/dev-forge | head -1 | sed 's/.*": *"//' | sed 's/"$//')
-bash "$DEV_FORGE_PATH/scaffold/init.sh"
-
-# If loaded locally
-bash /path/to/dev-forge/scaffold/init.sh
-```
-
-`init.sh` is interactive. It detects your project name, stack, and language, then generates the following files:
+The scaffold is interactive — it detects your project name, stack, and language, then generates the following files:
 
 | File                                        | Purpose                                                        |
 | ------------------------------------------- | -------------------------------------------------------------- |
@@ -130,7 +121,7 @@ Ask Claude to "use the senior-engineer-code-reviewer agent to review the last ch
 | Symptom                                                  | Cause                                        | Fix                                                                                                    |
 | -------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Skills not found                                         | Plugin not loaded                            | Run `claude plugin install dev-forge@dev-forge` or start with `claude --plugin-dir /path/to/dev-forge` |
-| Hooks not firing                                         | `settings.json` missing hook entries         | Re-run `init.sh` or manually add hook blocks from `hooks/hooks.json`                                   |
+| Hooks not firing                                         | `settings.json` missing hook entries         | Re-run `init.sh` or manually add hook blocks to `.claude/settings.json`                                |
 | `block-main-branch-commits` fires on non-main branch     | `CLAUDE_BRANCH` env var not set              | Ensure you are in a git repo with a valid HEAD                                                         |
 | `enforce-branch-naming` rejects valid name               | Pattern mismatch with your naming convention | Edit `.claude/hooks/plugin-profiles.json` to adjust the regex                                          |
 | `session-end-unified-gate.sh` fails with missing command | Test runner or linter not installed          | Install missing tools per your `rules/testing.md` configuration                                        |

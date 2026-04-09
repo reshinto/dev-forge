@@ -119,7 +119,7 @@ Edit `.claude/hooks/plugin-profiles.json`:
 
 ```json
 {
-  "core": ["dev-forge@local", "superpowers"],
+  "core": ["dev-forge@dev-forge", "superpowers"],
   "branch_modes": {
     "feat/payments-": ["stripe-docs", "pci-compliance-checker"],
     "feat/infra-":   ["terraform-helper"]

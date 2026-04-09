@@ -33,7 +33,7 @@ Open the repo in Claude Code to get the plugin's own `.claude/` configuration ac
 |------|--------------------|
 | New agent | `agents/<name>.md` |
 | New skill | `skills/<name>/SKILL.md` |
-| New hook | `hooks/<name>.sh`, entry in `hooks/hooks.json` |
+| New hook | `hooks/<name>.sh`, entry in `hooks/hooks.json` (plugin-level) or `scaffold/templates/settings.json.tmpl` (project-level) |
 | Scaffold template change | `scaffold/templates/<path>`, update `scaffold/update.sh` if adding a new tracked file |
 | Documentation | `docs/<name>.md` or update existing |
 | Bug fix | Changed file(s) + description in PR body |
@@ -84,7 +84,7 @@ Skills should be self-contained instruction sets. Do not embed project-specific 
 2. The script must be self-gating: check whether it applies before doing anything expensive.
 3. Write all diagnostic output to `stderr`. Write nothing to `stdout` unless the hook is expected to produce output consumed by Claude Code.
 4. Exit `0` to pass, non-zero to block.
-5. Register the hook in `hooks/hooks.json` under the correct lifecycle event.
+5. Register the hook in `hooks/hooks.json` under the correct lifecycle event (for plugin-level hooks). If the hook should also be scaffolded into projects, add it to `scaffold/templates/settings.json.tmpl` and `scaffold/init.sh`.
 6. Add a CHANGELOG entry.
 7. Open a PR. Include a test case showing the hook blocking and passing.
 

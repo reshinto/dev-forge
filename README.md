@@ -8,7 +8,7 @@ A Claude Code plugin that provides a structured set of agents, skills, and hooks
 |-----------|-------|--------------|
 | Agents | 10 | Specialized reviewers and planners invoked by name in any session |
 | Skills | 13 | Slash commands for development workflows (TDD, debugging, reviews, audits) |
-| Hooks | 8 | Automated guards that run on git operations and file edits |
+| Hooks | 11 | Automated guards that run on git operations, file edits, and session lifecycle |
 | Scaffold | 2 scripts | Generates and updates `.claude/` project config from templates |
 
 ## Prerequisites
@@ -124,18 +124,21 @@ Once installed, dev-forge is available in every Claude Code session across all y
 
 | Name | Trigger | Behavior |
 |------|---------|----------|
-| `block-main-branch-commits` | Pre-commit | Blocks commits on `main` or `master` |
-| `block-ai-attribution` | Pre-commit | Blocks commits containing AI/assistant attribution in messages |
-| `enforce-branch-naming` | Pre-commit | Blocks commits if branch name does not match `<type>/<description>` |
-| `session-start-branch-check` | Session start | Warns if the current branch is `main`, `master`, or has no task context |
-| `auto-pr-after-push` | Post-push | Opens a pull request automatically after pushing a feature branch |
-| `post-edit-code-quality-check` | Post file edit | Runs language-appropriate linting and type checking after source file edits |
-| `post-edit-accessibility-check` | Post file edit | Checks UI component files for accessibility attribute issues after edits |
-| `ban-hardcoded-waits` | Post file edit | Warns when `sleep`, hardcoded timeouts, or arbitrary waits are introduced |
+| `block-main-branch-commits` | PreToolUse | Blocks commits and pushes on `main` or `master` |
+| `block-ai-attribution` | PreToolUse | Blocks commits containing AI/assistant attribution in messages |
+| `enforce-branch-naming` | PreToolUse | Blocks branch creation if name does not match `<type>/<description>` |
+| `session-start-branch-check` | SessionStart | Warns if the current branch is `main`, `master`, or has no task context |
+| `auto-plugin-mode` | SessionStart | Activates plugin profiles based on branch name prefix |
+| `auto-pr-after-push` | PostToolUse | Reminds to create a PR after pushing a feature branch |
+| `post-edit-code-quality-check` | PostToolUse | Runs language-appropriate linting and type checking after source file edits |
+| `post-edit-accessibility-check` | PostToolUse | Checks UI component files for accessibility attribute issues after edits |
+| `ban-hardcoded-waits` | PostToolUse | Warns when `sleep`, hardcoded timeouts, or arbitrary waits are introduced |
+| `session-end-unified-gate` | Stop | Runs lint, format, typecheck, tests, and security scan at session end |
+| `session-end-claude-system-check` | Stop | Validates .claude/ config consistency at session end |
 
 ## Scaffold
 
-**`init.sh`** generates a `.claude/` directory in your project from templates, including `CLAUDE.md`, `PLAN.md`, a `rules/` directory with standard rule files, and a `memory/` directory. Run once per project.
+**`init.sh`** generates a `.claude/` directory in your project from templates, including `CLAUDE.md`, rules, agents, skills, hooks, and settings. Run once per project. See the [Scaffold guide](docs/scaffold.md) for details.
 
 **`update.sh`** applies diff-based updates when the plugin releases new template versions. It merges changes into your existing `.claude/` config without overwriting local customizations.
 

@@ -5,7 +5,7 @@
 Think of hooks like automatic safety checks — similar to a smoke detector. You do not have to remember to check for smoke; the detector fires the moment conditions are met. dev-forge hooks run automatically at defined points in a Claude Code session to catch problems before they land in your codebase.
 
 > **Prerequisites**
-> - dev-forge installed and `hooks.json` registered in `.claude/settings.json` (see [Getting Started](getting-started.md))
+> - dev-forge installed and scaffold completed (hooks are registered in `.claude/settings.json`)
 
 ---
 
@@ -24,6 +24,19 @@ dev-forge uses all four events: `SessionStart`, `PreToolUse`, `PostToolUse`, and
 
 ---
 
+## Plugin-Level vs Project-Level Hooks
+
+dev-forge provides hooks at two levels:
+
+| Level | Location | Scope | Customizable? |
+|-------|----------|-------|--------------|
+| **Plugin-level** | `hooks/hooks.json` inside the dev-forge plugin | Active whenever the plugin is enabled | No — modify the plugin source to change |
+| **Project-level** | `.claude/settings.json` in your project | Active in that project only | Yes — edit `.claude/settings.json` |
+
+The scaffold generates **project-level hooks** in `.claude/settings.json` (e.g., `block-main-branch-commits.sh`, `session-start-branch-check.sh`). The plugin also ships its own hooks in `hooks/hooks.json` (e.g., `post-edit-code-quality-check.sh`, `post-edit-accessibility-check.sh`, `ban-hardcoded-waits.sh`) which are always active when dev-forge is enabled.
+
+---
+
 ## Blocking vs Warning
 
 Hooks can either **block** the tool call or **warn** without blocking:
@@ -38,6 +51,7 @@ Hooks can either **block** the tool call or **warn** without blocking:
 | Hook | Trigger | Blocking | What It Checks |
 |---|---|---|---|
 | `session-start-branch-check.sh` | `SessionStart` | Warning | Warns if the current branch is `main` or `master`; prompts to create a feature branch |
+| `auto-plugin-mode.sh` | `SessionStart` | — | Reads branch name and activates matching plugin profile from `plugin-profiles.json` |
 | `block-ai-attribution.sh` | `PreToolUse`: `git commit`, `git push`, `gh pr` | Blocking | Rejects commit messages containing AI attribution patterns (e.g., "Co-Authored-By: Claude") |
 | `block-main-branch-commits.sh` | `PreToolUse`: `git commit`, `git push`, `gh pr` | Blocking | Blocks commits and pushes directly to `main` or `master` |
 | `enforce-branch-naming.sh` | `PreToolUse`: `git checkout -b`, `git switch -c`, `git branch` | Blocking | Validates branch names match the `<type>/<description>` convention |
@@ -114,9 +128,9 @@ If a hook blocks unexpectedly:
 1. Read the error message printed by the hook — it describes what was checked and why it failed.
 2. Run the hook script directly to see its full output:
    ```bash
-   bash .claude/plugins/dev-forge/hooks/block-main-branch-commits.sh
+   bash .claude/hooks/block-main-branch-commits.sh
    ```
-3. Check the hook's matcher in `hooks/hooks.json` to confirm it matches the tool call you made.
+3. Check the hook's matcher in `.claude/settings.json` to confirm it matches the tool call you made.
 4. If the hook is incorrectly blocking, adjust the matcher or the script — see [Customization](customization.md) for how to override hooks without modifying the plugin source.
 
 ---

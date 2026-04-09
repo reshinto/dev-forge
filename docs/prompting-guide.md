@@ -60,23 +60,134 @@ Constraints:
 
 ## Triggering dev-forge Skills
 
-Invoke any skill by typing its name as a slash command:
+Invoke any skill by typing its name as a slash command.
 
-| Command | When to Use |
-|---------|-------------|
-| `/tdd` | Before implementing a feature — writes tests first, then implementation |
-| `/debugging` | When you hit a bug — follows structured diagnostic paths |
-| `/feature-dev` | Starting a new feature — guided 7-step workflow with agent reviews |
-| `/implementation-planning` | Before a complex change — creates structured file-by-file plan |
-| `/verification` | Before claiming work is done — runs completeness checklist |
-| `/accessibility-audit` | After UI changes — checks WCAG 2.1 AA compliance |
-| `/architecture-review` | For structural changes — evaluates state management, build, security |
-| `/documentation-review` | Before merging — checks docs for clarity and accuracy |
-| `/security-coverage-audit` | Before release — combined security + coverage check |
-| `/strict-type-review` | After writing typed code — checks exhaustiveness, unsafe escapes |
-| `/readme-optimization` | When updating README — AIDA flow, GitHub SEO |
-| `/branch-safety-check` | Anytime — verifies you're on a proper feature branch |
-| `/claude-system-management` | When editing .claude/ — audits system config consistency |
+### `/tdd` — Test-Driven Development
+
+Write tests first, then implement to make them pass.
+
+```
+/tdd
+I need to add a calculateShipping function that returns free shipping
+for orders over $50 and flat $5.99 otherwise.
+```
+
+### `/debugging` — Systematic Debugging
+
+Follow structured diagnostic paths to isolate a bug.
+
+```
+/debugging
+The checkout page shows a blank total when the cart has more than
+10 items. It works fine with fewer items.
+```
+
+### `/feature-dev` — Guided Feature Development
+
+7-step workflow: product eval → design → architecture → implement → review → QA → docs.
+
+```
+/feature-dev
+Add a dark mode toggle to the settings page that persists the
+user's preference across sessions.
+```
+
+### `/implementation-planning` — Create Implementation Plan
+
+Plan file changes, dependencies, and test strategy before coding.
+
+```
+/implementation-planning
+I need to add role-based access control. Admins can manage users,
+editors can publish content, viewers can only read.
+```
+
+### `/verification` — Pre-Completion Checklist
+
+Verify work is complete before committing or creating a PR.
+
+```
+/verification
+I just finished the user preferences API. Check that everything
+is wired up, tested, and ready to ship.
+```
+
+### `/accessibility-audit` — WCAG 2.1 AA Audit
+
+Audit UI components for accessibility compliance.
+
+```
+/accessibility-audit
+Check the new modal dialog component in src/components/Modal.tsx
+for keyboard navigation, screen reader support, and color contrast.
+```
+
+### `/architecture-review` — Architecture Review
+
+Evaluate structural decisions for state management, build optimization, and security.
+
+```
+/architecture-review
+I'm adding a WebSocket layer for real-time notifications. Review
+the proposed architecture in src/services/ws/ for scalability.
+```
+
+### `/documentation-review` — Documentation Review
+
+Check docs for clarity, accuracy, and contributor onboarding quality.
+
+```
+/documentation-review
+Review the README and docs/api.md — I rewrote the getting started
+section and added new API endpoint docs.
+```
+
+### `/security-coverage-audit` — Security & Coverage Audit
+
+Combined security checks and test coverage verification.
+
+```
+/security-coverage-audit
+Run a full security and coverage audit before we cut the v2.0 release.
+```
+
+### `/strict-type-review` — Strict Type Safety Review
+
+Check for unsafe type escape hatches, unchecked collection access, and exhaustiveness gaps.
+
+```
+/strict-type-review
+Review the new types in src/types/order.ts and their usage across
+the order processing module.
+```
+
+### `/readme-optimization` — README Optimization
+
+Optimize README for GitHub discoverability and clear presentation.
+
+```
+/readme-optimization
+Our README hasn't been updated since launch. Optimize it for
+discoverability and make the value proposition clearer.
+```
+
+### `/branch-safety-check` — Branch Safety
+
+Verify you're on a proper feature branch, not main.
+
+```
+/branch-safety-check
+```
+
+### `/claude-system-management` — System Config Audit
+
+Audit .claude/ configuration for consistency and drift.
+
+```
+/claude-system-management
+Audit all agents, skills, and hooks for consistency. Check that
+CLAUDE.md matches the current codebase.
+```
 
 ---
 
@@ -113,42 +224,135 @@ Run the qa-tester agent to validate test coverage.
 
 ## Triggering Companion Plugin Skills
 
-If you have companion plugins installed alongside dev-forge, here's how to trigger their key capabilities:
+If you have companion plugins installed alongside dev-forge, here's how to trigger their key capabilities.
 
 ### superpowers (if installed)
 
-| Command | What it Does |
-|---------|-------------|
-| `/superpowers:brainstorming` | Explore requirements, constraints, and design options before building. Use before any creative work — features, components, modifications. |
-| `/superpowers:test-driven-development` | Full TDD workflow with red-green-refactor cycle. Use when implementing any feature or bugfix. |
-| `/superpowers:systematic-debugging` | Structured debugging with hypothesis formation and evidence gathering. Use when encountering any unexpected behavior. |
-| `/superpowers:writing-plans` | Create detailed implementation plans from specs. Use before touching code on multi-step tasks. |
-| `/superpowers:executing-plans` | Execute plans with review checkpoints. Use after writing a plan. |
-| `/superpowers:verification-before-completion` | Verify work is actually done before claiming it. Use before committing or creating PRs. |
-| `/superpowers:requesting-code-review` | Request structured code review. Use after completing a feature. |
-| `/superpowers:receiving-code-review` | Handle review feedback with technical rigor. Use when receiving PR comments. |
-| `/superpowers:finishing-a-development-branch` | Decide how to integrate work (merge, PR, cleanup). Use when implementation is complete. |
-| `/superpowers:using-git-worktrees` | Create isolated git worktrees for parallel work. Use when starting feature work that needs isolation. |
-| `/superpowers:dispatching-parallel-agents` | Run independent tasks in parallel. Use when facing 2+ independent tasks. |
+#### `/superpowers:brainstorming` — Explore Design Options
+
+```
+/superpowers:brainstorming
+I need to add real-time collaboration to the document editor.
+Multiple users should be able to edit simultaneously.
+```
+
+#### `/superpowers:test-driven-development` — Full TDD Workflow
+
+```
+/superpowers:test-driven-development
+Implement a rate limiter middleware that allows 100 requests
+per minute per API key, with a sliding window algorithm.
+```
+
+#### `/superpowers:systematic-debugging` — Hypothesis-Driven Debugging
+
+```
+/superpowers:systematic-debugging
+Users report that the search API returns stale results for about
+30 seconds after updating a document. Cache invalidation issue?
+```
+
+#### `/superpowers:writing-plans` — Create Implementation Plan
+
+```
+/superpowers:writing-plans
+Plan the migration from REST to GraphQL for the user and order
+endpoints. We need to maintain backward compatibility.
+```
+
+#### `/superpowers:executing-plans` — Execute Plan with Checkpoints
+
+```
+/superpowers:executing-plans
+Execute the GraphQL migration plan we created. Start with Phase 1:
+schema definitions and resolvers for the user endpoint.
+```
+
+#### `/superpowers:verification-before-completion` — Final Verification
+
+```
+/superpowers:verification-before-completion
+I'm about to create a PR for the payment processing feature.
+Verify everything is complete and nothing was missed.
+```
+
+#### `/superpowers:requesting-code-review` — Request Code Review
+
+```
+/superpowers:requesting-code-review
+Review the changes in src/services/payment/ — new Stripe
+integration replacing the old PayPal module.
+```
+
+#### `/superpowers:receiving-code-review` — Handle Review Feedback
+
+```
+/superpowers:receiving-code-review
+I got review feedback on PR #42. The reviewer flagged concerns
+about error handling in the retry logic. Address the feedback.
+```
+
+#### `/superpowers:finishing-a-development-branch` — Finish Branch
+
+```
+/superpowers:finishing-a-development-branch
+The feature is done and tests pass. Decide how to integrate
+this branch — merge, squash, or rebase.
+```
+
+#### `/superpowers:using-git-worktrees` — Parallel Worktrees
+
+```
+/superpowers:using-git-worktrees
+I need to work on a hotfix while my feature branch is mid-progress.
+Set up an isolated worktree for the fix.
+```
+
+#### `/superpowers:dispatching-parallel-agents` — Parallel Tasks
+
+```
+/superpowers:dispatching-parallel-agents
+Run these independently: lint the entire codebase, audit dependencies
+for vulnerabilities, and check for unused exports.
+```
 
 ### commit-commands (if installed)
 
-| Command | What it Does |
-|---------|-------------|
-| `/commit` | Create a well-formatted git commit |
-| `/commit-push-pr` | Commit, push, and open a PR in one step |
+#### `/commit` — Create Git Commit
+
+```
+/commit
+```
+
+Analyzes staged changes and creates a well-formatted commit message.
+
+#### `/commit-push-pr` — Commit, Push, and Open PR
+
+```
+/commit-push-pr
+```
+
+Commits staged changes, pushes the branch, and opens a pull request in one step.
 
 ### code-review (if installed)
 
-| Command | What it Does |
-|---------|-------------|
-| `/code-review:code-review` | Full code review of a pull request |
+#### `/code-review:code-review` — Full Code Review
+
+```
+/code-review:code-review
+Review PR #35 for correctness, security, and adherence to
+our coding standards.
+```
 
 ### pr-review-toolkit (if installed)
 
-| Command | What it Does |
-|---------|-------------|
-| `/pr-review-toolkit:review-pr` | Comprehensive PR review using specialized agents |
+#### `/pr-review-toolkit:review-pr` — Comprehensive PR Review
+
+```
+/pr-review-toolkit:review-pr 42
+```
+
+Runs a multi-agent review of the specified PR using specialized reviewers.
 
 ---
 

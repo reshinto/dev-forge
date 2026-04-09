@@ -74,7 +74,8 @@ AUTO_NAME="${AUTO_NAME:-$(basename "$TARGET_DIR")}"
 read -rp "Project name [$AUTO_NAME]: " PROJECT_NAME
 PROJECT_NAME="${PROJECT_NAME:-$AUTO_NAME}"
 
-read -rp "One-line description: " PROJECT_DESCRIPTION
+read -rp "One-line description [$PROJECT_NAME project]: " PROJECT_DESCRIPTION
+PROJECT_DESCRIPTION="${PROJECT_DESCRIPTION:-$PROJECT_NAME project}"
 
 echo ""
 echo "Project type:"
@@ -143,7 +144,16 @@ case "$LANG_NUM" in
   5) PRIMARY_LANGUAGE="Rust" ;;
   6) PRIMARY_LANGUAGE="Java/Kotlin" ;;
   7) PRIMARY_LANGUAGE="C/C++" ;;
-  *) read -rp "Language name: " PRIMARY_LANGUAGE ;;
+  8) read -rp "Language name: " PRIMARY_LANGUAGE ;;
+  *)
+    # Empty input — use auto-detected language if available
+    if [ -n "$AUTO_LANG" ]; then
+      PRIMARY_LANGUAGE="$AUTO_LANG"
+    else
+      read -rp "Language name: " PRIMARY_LANGUAGE
+      PRIMARY_LANGUAGE="${PRIMARY_LANGUAGE:-Unknown}"
+    fi
+    ;;
 esac
 
 # ---- Stage 3: Conditional Questions ----
