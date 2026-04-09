@@ -322,17 +322,45 @@ fi
 
 # ---- Detect all installed plugins ----
 
+# Core plugins that are enabled by default in settings.local.json
+CORE_PLUGINS="superpowers commit-commands context7 github code-review pr-review-toolkit dev-forge"
+
+is_core_plugin() {
+  local PID="$1"
+  local NAME="${PID%%@*}"  # strip @marketplace suffix
+  for CORE in $CORE_PLUGINS; do
+    [ "$NAME" = "$CORE" ] && return 0
+  done
+  return 1
+}
+
 ENABLED_PLUGINS=""
+LOCAL_ENABLED_PLUGINS=""
 if [ -f "$HOME/.claude/plugins/installed_plugins.json" ]; then
   # Extract all plugin identifiers (keys under "plugins")
   PLUGIN_IDS=$(grep -o '"[^"]*@[^"]*":' "$HOME/.claude/plugins/installed_plugins.json" 2>/dev/null | sed 's/":$//' | sed 's/^"//' | sort -u)
-  FIRST_PLUGIN=true
+  FIRST_ALL=true
+  FIRST_LOCAL=true
   for PID in $PLUGIN_IDS; do
-    if [ "$FIRST_PLUGIN" = true ]; then
-      FIRST_PLUGIN=false
+    # settings.json: all plugins enabled
+    if [ "$FIRST_ALL" = true ]; then
+      FIRST_ALL=false
       ENABLED_PLUGINS="\"$PID\": true"
     else
       ENABLED_PLUGINS="$ENABLED_PLUGINS, \"$PID\": true"
+    fi
+
+    # settings.local.json: only core plugins enabled, rest disabled
+    if is_core_plugin "$PID"; then
+      VALUE="true"
+    else
+      VALUE="false"
+    fi
+    if [ "$FIRST_LOCAL" = true ]; then
+      FIRST_LOCAL=false
+      LOCAL_ENABLED_PLUGINS="\"$PID\": $VALUE"
+    else
+      LOCAL_ENABLED_PLUGINS="$LOCAL_ENABLED_PLUGINS, \"$PID\": $VALUE"
     fi
   done
 fi
@@ -373,6 +401,7 @@ process_template() {
     -e "s|{{COVERAGE_LINES}}|$COVERAGE_LINES|g" \
     -e "s|{{FORGE_PLUGIN_ID}}|$FORGE_PLUGIN_ID|g" \
     -e "s|{{ENABLED_PLUGINS}}|$ENABLED_PLUGINS|g" \
+    -e "s|{{LOCAL_ENABLED_PLUGINS}}|$LOCAL_ENABLED_PLUGINS|g" \
     "$SRC" > "$DST"
 }
 
