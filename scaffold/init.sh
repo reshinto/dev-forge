@@ -320,6 +320,23 @@ if [ -f "$HOME/.claude/plugins/installed_plugins.json" ]; then
   [ -n "$DETECTED_ID" ] && FORGE_PLUGIN_ID="$DETECTED_ID"
 fi
 
+# ---- Detect all installed plugins ----
+
+ENABLED_PLUGINS=""
+if [ -f "$HOME/.claude/plugins/installed_plugins.json" ]; then
+  # Extract all plugin identifiers (keys under "plugins")
+  PLUGIN_IDS=$(grep -o '"[^"]*@[^"]*":' "$HOME/.claude/plugins/installed_plugins.json" 2>/dev/null | sed 's/":$//' | sed 's/^"//' | sort -u)
+  FIRST_PLUGIN=true
+  for PID in $PLUGIN_IDS; do
+    if [ "$FIRST_PLUGIN" = true ]; then
+      FIRST_PLUGIN=false
+      ENABLED_PLUGINS="\"$PID\": true"
+    else
+      ENABLED_PLUGINS="$ENABLED_PLUGINS, \"$PID\": true"
+    fi
+  done
+fi
+
 # ---- Generate files ----
 
 echo ""
@@ -355,6 +372,7 @@ process_template() {
     -e "s|{{COVERAGE_FUNCTIONS}}|$COVERAGE_FUNCTIONS|g" \
     -e "s|{{COVERAGE_LINES}}|$COVERAGE_LINES|g" \
     -e "s|{{FORGE_PLUGIN_ID}}|$FORGE_PLUGIN_ID|g" \
+    -e "s|{{ENABLED_PLUGINS}}|$ENABLED_PLUGINS|g" \
     "$SRC" > "$DST"
 }
 
