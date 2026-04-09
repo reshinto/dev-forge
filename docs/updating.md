@@ -18,7 +18,7 @@ There are two separate things that update independently. Confusing them is the m
 
 | Thing | What it is | How to update |
 |-------|------------|---------------|
-| **Plugin** | The agents, skills, and hooks that dev-forge itself ships | Re-clone or `claude plugin update` |
+| **Plugin** | The agents, skills, and hooks that dev-forge itself ships | `claude plugin update dev-forge` (marketplace) or `git pull` (local) |
 | **Scaffold** | The `.claude/` files generated into your project | `bash scaffold/update.sh` |
 
 The plugin and the scaffold version together. If you update the plugin but not the scaffold, your project files may be out of date, and vice versa.
@@ -27,17 +27,17 @@ The plugin and the scaffold version together. If you update the plugin but not t
 
 ## Updating the plugin
 
-### Via Claude Code plugin manager
+### If installed from marketplace
 
 ```bash
 claude plugin update dev-forge
 ```
 
-This pulls the latest agents, skills, and hook scripts from the plugin source.
+This pulls the latest agents, skills, and hook scripts from the marketplace source.
 
-### Via re-clone
+### If loaded locally
 
-If you installed by cloning the repo directly:
+If you cloned the repo and use `--plugin-dir`:
 
 ```bash
 cd /path/to/dev-forge

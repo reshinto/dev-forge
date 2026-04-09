@@ -33,11 +33,15 @@ dev-forge is non-invasive: it installs into `.claude/` inside your project and r
 
 ### Step 1 — Remove the plugin from Claude Code
 
+If installed from the marketplace:
+
 ```bash
 claude plugin remove dev-forge
 ```
 
 This removes the plugin registration and all plugin-side agents, skills, and hook scripts.
+
+If you loaded locally with `--plugin-dir`, simply stop passing the flag — there is nothing to unregister.
 
 ### Step 2 — Delete scaffolded project files
 

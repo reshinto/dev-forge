@@ -2,37 +2,54 @@
 
 # Getting Started
 
-dev-forge is a Claude Code plugin that installs structured workflows, review agents, and safety hooks into any project. This guide covers two installation methods and walks through your first session.
+dev-forge is a Claude Code plugin that installs structured workflows, review agents, and safety hooks into any project. This guide covers installation and walks through your first session.
 
 > **Prerequisites**
+>
 > - Claude Code installed and authenticated
 > - Git initialized in your project
-> - Node.js 18+ (for projects using the JS/TS toolchain)
+
+---
+
+## How the marketplace works
+
+dev-forge is distributed as a **self-hosted plugin marketplace**. The GitHub repository serves double duty:
+
+1. **Marketplace catalog** — `.claude-plugin/marketplace.json` tells Claude Code what plugins are available
+2. **Plugin source** — the plugin code (agents, skills, hooks) lives in the same repository
+
+When a user runs `claude plugin marketplace add reshinto/dev-forge`, Claude Code fetches the repository and reads `marketplace.json` to discover available plugins. When they then run `claude plugin install dev-forge@dev-forge`, Claude Code installs the plugin from the source specified in the catalog (`"source": "."` — the repo root).
+
+This means there is no external registry. The GitHub repo **is** the marketplace.
 
 ---
 
 ## Installation
 
-### Method 1: Plugin add (recommended)
+### Method 1: Install from marketplace (recommended)
 
-Install dev-forge as a Claude Code plugin directly from its repository:
-
-```bash
-claude plugin add https://github.com/your-org/dev-forge
-```
-
-Claude Code registers the plugin and makes its skills, agents, and hooks available automatically in every session.
-
-### Method 2: Self-hosted (git clone)
-
-Clone the repository alongside your project and reference it as a local plugin:
+From any project directory, add the marketplace and install the plugin:
 
 ```bash
-git clone https://github.com/your-org/dev-forge ~/.claude/plugins/dev-forge
-claude plugin add ~/.claude/plugins/dev-forge
+# Add the marketplace (one-time setup)
+claude plugin marketplace add reshinto/dev-forge
+
+# Install the plugin
+claude plugin install dev-forge@dev-forge
 ```
 
-Use this method when you need to customize hook scripts or pin to a specific version.
+The first command registers the dev-forge GitHub repository as a marketplace source. The second installs the plugin from that marketplace. After installation, all dev-forge skills, agents, and hooks are available in every Claude Code session — regardless of which project you are in.
+
+### Method 2: Load locally for development/testing
+
+Clone the repository and load it directly for a single session:
+
+```bash
+git clone https://github.com/reshinto/dev-forge.git
+claude --plugin-dir /path/to/dev-forge
+```
+
+This loads the plugin for the current session only and does not persist across sessions. Use this when you need to customize scripts or test changes before committing.
 
 ---
 
@@ -41,29 +58,33 @@ Use this method when you need to customize hook scripts or pin to a specific ver
 After installation, scaffold your project's `.claude/` directory:
 
 ```bash
+# If installed from marketplace
 bash $(claude plugin path dev-forge)/scaffold/init.sh
+
+# If loaded locally
+bash /path/to/dev-forge/scaffold/init.sh
 ```
 
 `init.sh` is interactive. It detects your project name, stack, and language, then generates the following files:
 
-| File | Purpose |
-|---|---|
-| `.claude/CLAUDE.md` | Project identity, stack summary, key paths, and behavior rules |
-| `.claude/rules/coding-standards.md` | Naming conventions, formatting, import rules |
-| `.claude/rules/workflow.md` | Branch strategy, git operations, PR requirements |
-| `.claude/rules/architecture.md` | Directory layout, pattern constraints |
-| `.claude/rules/testing.md` | Test runner config, coverage thresholds |
-| `.claude/rules/token-efficiency.md` | Token-aware communication guidelines |
-| `.claude/rules/docs.md` | Documentation standards |
-| `.claude/rules/ui-ux.md` | UI/UX rules (generated when project has a frontend) |
-| `.claude/rules/docker-ci-cd.md` | Docker and CI/CD rules (generated when applicable) |
-| `.claude/settings.json` | Plugin IDs, model preferences, hook registration |
-| `.claude/settings.local.json` | Local overrides (not committed) |
-| `.claude/hooks/auto-plugin-mode.sh` | Branch-name-based plugin profile switcher |
-| `.claude/hooks/plugin-profiles.json` | Plugin profile definitions per branch prefix |
-| `.claude/hooks/session-end-unified-gate.sh` | End-of-session quality gate (lint, typecheck, tests) |
-| `.claude/hooks/security-patterns.txt` | Patterns used by the security scan hook |
-| `.claude/.scaffold-meta.json` | Version and checksum record for future updates |
+| File                                        | Purpose                                                        |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| `.claude/CLAUDE.md`                         | Project identity, stack summary, key paths, and behavior rules |
+| `.claude/rules/coding-standards.md`         | Naming conventions, formatting, import rules                   |
+| `.claude/rules/workflow.md`                 | Branch strategy, git operations, PR requirements               |
+| `.claude/rules/architecture.md`             | Directory layout, pattern constraints                          |
+| `.claude/rules/testing.md`                  | Test runner config, coverage thresholds                        |
+| `.claude/rules/token-efficiency.md`         | Token-aware communication guidelines                           |
+| `.claude/rules/docs.md`                     | Documentation standards                                        |
+| `.claude/rules/ui-ux.md`                    | UI/UX rules (generated when project has a frontend)            |
+| `.claude/rules/docker-ci-cd.md`             | Docker and CI/CD rules (generated when applicable)             |
+| `.claude/settings.json`                     | Plugin IDs, model preferences, hook registration               |
+| `.claude/settings.local.json`               | Local overrides (not committed)                                |
+| `.claude/hooks/auto-plugin-mode.sh`         | Branch-name-based plugin profile switcher                      |
+| `.claude/hooks/plugin-profiles.json`        | Plugin profile definitions per branch prefix                   |
+| `.claude/hooks/session-end-unified-gate.sh` | End-of-session quality gate (lint, typecheck, tests)           |
+| `.claude/hooks/security-patterns.txt`       | Patterns used by the security scan hook                        |
+| `.claude/.scaffold-meta.json`               | Version and checksum record for future updates                 |
 
 ---
 
@@ -97,14 +118,14 @@ Ask Claude to "use the senior-engineer-code-reviewer agent to review the last ch
 
 ## Troubleshooting
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| Skills not found after plugin add | Plugin not registered in settings.json | Run `claude plugin list` and confirm `dev-forge` appears |
-| Hooks not firing | `settings.json` missing hook entries | Re-run `init.sh` or manually add hook blocks from `hooks/hooks.json` |
-| `block-main-branch-commits` fires on non-main branch | `CLAUDE_BRANCH` env var not set | Ensure you are in a git repo with a valid HEAD |
-| `enforce-branch-naming` rejects valid name | Pattern mismatch with your naming convention | Edit `.claude/hooks/plugin-profiles.json` to adjust the regex |
-| `session-end-unified-gate.sh` fails with missing command | Test runner or linter not installed | Install missing tools per your `rules/testing.md` configuration |
-| `init.sh` aborts with "already exists" | `.claude/` directory present | Run `scaffold/update.sh` instead to apply only changed files |
+| Symptom                                                  | Cause                                        | Fix                                                                                                    |
+| -------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Skills not found                                         | Plugin not loaded                            | Run `claude plugin install dev-forge@dev-forge` or start with `claude --plugin-dir /path/to/dev-forge` |
+| Hooks not firing                                         | `settings.json` missing hook entries         | Re-run `init.sh` or manually add hook blocks from `hooks/hooks.json`                                   |
+| `block-main-branch-commits` fires on non-main branch     | `CLAUDE_BRANCH` env var not set              | Ensure you are in a git repo with a valid HEAD                                                         |
+| `enforce-branch-naming` rejects valid name               | Pattern mismatch with your naming convention | Edit `.claude/hooks/plugin-profiles.json` to adjust the regex                                          |
+| `session-end-unified-gate.sh` fails with missing command | Test runner or linter not installed          | Install missing tools per your `rules/testing.md` configuration                                        |
+| `init.sh` aborts with "already exists"                   | `.claude/` directory present                 | Run `scaffold/update.sh` instead to apply only changed files                                           |
 
 ---
 

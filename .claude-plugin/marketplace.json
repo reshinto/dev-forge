@@ -1,0 +1,18 @@
+{
+  "name": "dev-forge",
+  "owner": {
+    "name": "Terence",
+    "email": "terencekong2002@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "dev-forge",
+      "source": ".",
+      "description": "Development toolkit for Claude Code: specialized review agents, workflow skills, and automated quality hooks for any project",
+      "version": "1.0.0",
+      "author": {
+        "name": "Terence"
+      }
+    }
+  ]
+}

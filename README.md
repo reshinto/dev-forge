@@ -18,21 +18,47 @@ A Claude Code plugin that provides a structured set of agents, skills, and hooks
 
 ## Quick Start
 
-1. Install the plugin:
+### Install from marketplace (recommended)
+
+Run these commands from any project directory:
+
+1. Add the marketplace (one-time setup):
    ```sh
-   claude plugin add --from-git https://github.com/reshinto/dev-forge
+   claude plugin marketplace add reshinto/dev-forge
    ```
 
-2. Run the project scaffold:
+2. Install the plugin:
    ```sh
-   git clone https://github.com/reshinto/dev-forge /tmp/dev-forge && bash /tmp/dev-forge/scaffold/init.sh
+   claude plugin install dev-forge@dev-forge
    ```
 
-3. Open a Claude Code session in your project.
+Once installed, dev-forge is available in every Claude Code session across all your projects.
+
+3. Run the project scaffold (from your target project directory):
+   ```sh
+   bash $(claude plugin path dev-forge)/scaffold/init.sh
+   ```
 
 4. Verify setup:
    ```
    /branch-safety-check
+   ```
+
+### Load locally for development/testing
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/reshinto/dev-forge.git
+   ```
+
+2. Start a Claude Code session with the plugin loaded:
+   ```sh
+   claude --plugin-dir /path/to/dev-forge
+   ```
+
+3. Run the project scaffold (from your project directory):
+   ```sh
+   bash /path/to/dev-forge/scaffold/init.sh
    ```
 
 ## Concepts in 60 Seconds
@@ -123,10 +149,6 @@ The `post-edit-code-quality-check` hook runs the appropriate toolchain for each 
 | Go | `.go` |
 | Rust | `.rs` |
 | C / C++ | `.c`, `.cpp`, `.h`, `.hpp` |
-
-## Marketplace-Ready
-
-This plugin follows the official Claude Code plugin marketplace schema. It can be submitted to the marketplace without modification once the marketplace is publicly available.
 
 ## License
 
