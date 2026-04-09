@@ -79,6 +79,8 @@ bash /path/to/dev-forge/scaffold/init.sh
 | `.claude/rules/docs.md`                     | Documentation standards                                        |
 | `.claude/rules/ui-ux.md`                    | UI/UX rules (generated when project has a frontend)            |
 | `.claude/rules/docker-ci-cd.md`             | Docker and CI/CD rules (generated when applicable)             |
+| `.claude/agents/*.md`                       | 10 agent definitions (generic, customizable per project)       |
+| `.claude/skills/*/SKILL.md`                 | 13 skill definitions (generic, customizable per project)       |
 | `.claude/settings.json`                     | Plugin IDs, model preferences, hook registration               |
 | `.claude/settings.local.json`               | Local overrides (not committed)                                |
 | `.claude/hooks/block-ai-attribution.sh`          | Blocks commits/PRs containing AI attribution                   |

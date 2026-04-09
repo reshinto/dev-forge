@@ -212,6 +212,29 @@ After all stages complete, the script generates the files and prints a summary:
 [ok] rules/docs.md
 [ok] rules/ui-ux.md
 [ok] rules/docker-ci-cd.md
+[ok] agents/claude-system-architect.md
+[ok] agents/code-explorer.md
+[ok] agents/code-simplifier.md
+[ok] agents/product-strategist.md
+[ok] agents/qa-tester.md
+[ok] agents/senior-engineer-code-reviewer.md
+[ok] agents/silent-failure-hunter.md
+[ok] agents/tech-lead-architect.md
+[ok] agents/technical-writer.md
+[ok] agents/ui-ux-designer.md
+[ok] skills/accessibility-audit/SKILL.md
+[ok] skills/architecture-review/SKILL.md
+[ok] skills/branch-safety-check/SKILL.md
+[ok] skills/claude-system-management/SKILL.md
+[ok] skills/debugging/SKILL.md
+[ok] skills/documentation-review/SKILL.md
+[ok] skills/feature-dev/SKILL.md
+[ok] skills/implementation-planning/SKILL.md
+[ok] skills/readme-optimization/SKILL.md
+[ok] skills/security-coverage-audit/SKILL.md
+[ok] skills/strict-type-review/SKILL.md
+[ok] skills/tdd/SKILL.md
+[ok] skills/verification/SKILL.md
 [ok] settings.json
 [ok] settings.local.json
 [ok] hooks/auto-plugin-mode.sh
@@ -230,7 +253,7 @@ After all stages complete, the script generates the files and prints a summary:
   dev-forge scaffold complete!
 ============================================
 
-[info] Generated 22 files in /path/to/your-project/.claude/
+[info] Generated 45 files in /path/to/your-project/.claude/
 
 Next steps:
   1. Review and customize .claude/CLAUDE.md
@@ -256,6 +279,8 @@ After answering the prompts, the scaffold creates the following files inside `.c
 | `rules/docs.md` | Documentation standards. |
 | `rules/ui-ux.md` | UI/UX rules. Only generated for frontend or full-stack projects. |
 | `rules/docker-ci-cd.md` | Docker and CI/CD rules. Only generated if you opted in. |
+| `agents/*.md` | 10 agent definitions (code reviewer, architect, QA tester, etc.). Customized with your language and tooling choices. |
+| `skills/*/SKILL.md` | 13 skill definitions (TDD, debugging, feature dev, etc.). Customized with your test runner, lint commands, etc. |
 | `settings.json` | Plugin IDs, model preferences, and hook registration. |
 | `settings.local.json` | Local overrides (not committed to git). |
 | `hooks/block-ai-attribution.sh` | Blocks commits/PRs containing AI attribution patterns. |
@@ -269,6 +294,28 @@ After answering the prompts, the scaffold creates the following files inside `.c
 | `hooks/session-end-claude-system-check.sh` | Validates .claude/ config consistency (agent/skill frontmatter, hook references). |
 | `hooks/security-patterns.txt` | Patterns used by the security scan hook. |
 | `.scaffold-meta.json` | Version, checksums, and metadata for future updates. |
+
+---
+
+## Conflict resolution
+
+If agents or skills already exist in your `.claude/` directory (from a previous scaffold run or manual creation), the scaffold detects the conflict and prompts you for each file:
+
+```
+[warn] Conflict: agents/senior-engineer-code-reviewer.md already exists with different content
+  [O] Overwrite with scaffold version
+  [S] Skip (keep existing)
+  [M] Merge (save scaffold version for Claude to merge later)
+  Choose [O/S/M]:
+```
+
+| Choice | What happens |
+|--------|-------------|
+| **Overwrite** | Replaces the existing file with the new scaffold version. |
+| **Skip** | Keeps your existing file unchanged. |
+| **Merge** | Saves the scaffold version as `<filename>.scaffold` alongside your existing file. In your next Claude Code session, ask Claude to merge the two versions — it will combine your customizations with the new scaffold content. |
+
+If the existing file is identical to what the scaffold would generate, it is silently skipped.
 
 ---
 

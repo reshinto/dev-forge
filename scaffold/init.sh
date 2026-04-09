@@ -371,7 +371,7 @@ echo ""
 info "Generating .claude/ configuration..."
 echo ""
 
-mkdir -p "$CLAUDE_DIR/rules" "$CLAUDE_DIR/hooks"
+mkdir -p "$CLAUDE_DIR/rules" "$CLAUDE_DIR/hooks" "$CLAUDE_DIR/agents" "$CLAUDE_DIR/skills"
 
 # Helper: process a template file with sed substitution
 process_template() {
@@ -457,6 +457,70 @@ ok "settings.json"
 
 process_template "$TEMPLATE_DIR/settings.local.json.tmpl" "$CLAUDE_DIR/settings.local.json"
 ok "settings.local.json"
+
+# Helper: install a file with conflict detection
+# Usage: install_with_conflict_check SRC DST LABEL
+# If DST exists and differs from what would be generated, prompt the user.
+install_with_conflict_check() {
+  local SRC="$1"
+  local DST="$2"
+  local LABEL="$3"
+
+  # Generate the new version into a temp file
+  local TMP_NEW
+  TMP_NEW=$(mktemp)
+  process_template "$SRC" "$TMP_NEW"
+
+  if [ -f "$DST" ]; then
+    # File exists — check if identical
+    if diff -q "$TMP_NEW" "$DST" > /dev/null 2>&1; then
+      ok "$LABEL (unchanged)"
+      rm -f "$TMP_NEW"
+      return
+    fi
+
+    # File differs — prompt the user
+    echo ""
+    warn "Conflict: $LABEL already exists with different content"
+    echo "  [O] Overwrite with scaffold version"
+    echo "  [S] Skip (keep existing)"
+    echo "  [M] Merge (save scaffold version for Claude to merge later)"
+    read -rp "  Choose [O/S/M]: " CONFLICT_CHOICE
+
+    case "$CONFLICT_CHOICE" in
+      [Oo])
+        cp "$TMP_NEW" "$DST"
+        ok "$LABEL (overwritten)"
+        ;;
+      [Mm])
+        cp "$TMP_NEW" "${DST}.scaffold"
+        ok "$LABEL (scaffold version saved as ${LABEL}.scaffold — ask Claude to merge)"
+        ;;
+      *)
+        info "$LABEL (skipped)"
+        ;;
+    esac
+    rm -f "$TMP_NEW"
+  else
+    # No conflict — install directly
+    cp "$TMP_NEW" "$DST"
+    ok "$LABEL"
+    rm -f "$TMP_NEW"
+  fi
+}
+
+# Agents
+for AGENT_FILE in "$TEMPLATE_DIR"/agents/*.md; do
+  AGENT_NAME=$(basename "$AGENT_FILE")
+  install_with_conflict_check "$AGENT_FILE" "$CLAUDE_DIR/agents/$AGENT_NAME" "agents/$AGENT_NAME"
+done
+
+# Skills
+for SKILL_DIR in "$TEMPLATE_DIR"/skills/*/; do
+  SKILL_NAME=$(basename "$SKILL_DIR")
+  mkdir -p "$CLAUDE_DIR/skills/$SKILL_NAME"
+  install_with_conflict_check "$SKILL_DIR/SKILL.md" "$CLAUDE_DIR/skills/$SKILL_NAME/SKILL.md" "skills/$SKILL_NAME/SKILL.md"
+done
 
 # Hooks
 for HOOK_SH in auto-plugin-mode.sh block-ai-attribution.sh block-main-branch-commits.sh enforce-branch-naming.sh session-start-branch-check.sh auto-pr-after-push.sh session-end-claude-system-check.sh; do
