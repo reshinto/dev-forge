@@ -9,12 +9,21 @@
     "pr-review-toolkit"
   ],
   "branch_modes": {
-    "feat/ui-": ["frontend-design", "figma"],
-    "fix/ui-": ["frontend-design", "figma"],
+    "feat/ui-": ["frontend-design", "figma", "playground"],
+    "fix/ui-": ["frontend-design"],
     "feat/e2e-": ["playwright"],
     "fix/e2e-": ["playwright"],
+    "feat/design-": ["frontend-design", "figma"],
+    "feat/preview-": ["playwright", "frontend-design"],
+    "fix/preview-": ["playwright", "frontend-design"],
+    "feat/backend-": ["security-guidance"],
+    "fix/backend-": ["security-guidance"],
+    "feat/api-": ["security-guidance"],
+    "fix/api-": ["security-guidance"],
     "feat/refactor-": ["code-simplifier"],
     "refactor/": ["code-simplifier"],
-    "chore/claude-": ["claude-md-management", "skill-creator", "claude-code-setup"]
+    "chore/claude-": ["claude-md-management", "skill-creator", "claude-code-setup"],
+    "chore/skill-": ["skill-creator"],
+    "chore/meta-": ["claude-md-management", "claude-code-setup", "ralph-loop"]
   }
 }

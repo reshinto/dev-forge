@@ -54,18 +54,34 @@ Hooks can either **block** the tool call or **warn** without blocking:
 
 `auto-plugin-mode.sh` runs as part of `SessionStart` (via your `settings.json`) and reads the current branch name to activate a matching plugin profile.
 
-Plugin profiles are defined in `.claude/hooks/plugin-profiles.json`. Each profile maps a branch prefix pattern to a set of plugins to enable:
+Plugin profiles are defined in `.claude/hooks/plugin-profiles.json`. The file has two sections:
 
 ```json
 {
-  "profiles": [
-    { "pattern": "feat/", "plugins": ["dev-forge"] },
-    { "pattern": "fix/",  "plugins": ["dev-forge"] }
-  ]
+  "core": [
+    "dev-forge@dev-forge",
+    "superpowers",
+    "commit-commands",
+    "context7",
+    "github",
+    "code-review",
+    "pr-review-toolkit"
+  ],
+  "branch_modes": {
+    "feat/ui-": ["frontend-design", "figma", "playground"],
+    "fix/ui-": ["frontend-design"],
+    "feat/backend-": ["security-guidance"],
+    "fix/backend-": ["security-guidance"],
+    "feat/api-": ["security-guidance"],
+    "fix/api-": ["security-guidance"],
+    "refactor/": ["code-simplifier"],
+    "chore/claude-": ["claude-md-management", "skill-creator", "claude-code-setup"]
+  }
 }
 ```
 
-When your branch matches a pattern, the corresponding plugins are activated for the session. This lets different branch types load different tool sets automatically.
+- **`core`**: Plugins always enabled, regardless of branch.
+- **`branch_modes`**: Keys are branch name prefixes. When the current branch matches a prefix, those plugins are activated in addition to core. Multiple prefixes can match simultaneously.
 
 ---
 

@@ -108,13 +108,15 @@ Multiple plugins can be active in the same session. Register additional plugins 
 
 Skills and agents from all registered plugins are available simultaneously. If two plugins define a skill with the same name, the plugin listed last wins. To resolve conflicts explicitly, create a project-level override (see "Overriding Skills" above).
 
-Plugin profiles in `.claude/hooks/plugin-profiles.json` can also include additional plugins per branch pattern:
+Plugin profiles in `.claude/hooks/plugin-profiles.json` control which plugins activate per branch. Add custom branch prefixes to `branch_modes`:
 
 ```json
 {
-  "profiles": [
-    { "pattern": "feat/", "plugins": ["dev-forge", "my-other-plugin"] }
-  ]
+  "core": ["dev-forge@dev-forge", "superpowers", "context7"],
+  "branch_modes": {
+    "feat/payments-": ["stripe-docs", "pci-compliance-checker"],
+    "feat/infra-": ["terraform-helper"]
+  }
 }
 ```
 
