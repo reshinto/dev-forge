@@ -459,9 +459,11 @@ process_template "$TEMPLATE_DIR/settings.local.json.tmpl" "$CLAUDE_DIR/settings.
 ok "settings.local.json"
 
 # Hooks
-cp "$TEMPLATE_DIR/hooks/auto-plugin-mode.sh" "$CLAUDE_DIR/hooks/auto-plugin-mode.sh"
-chmod +x "$CLAUDE_DIR/hooks/auto-plugin-mode.sh"
-ok "hooks/auto-plugin-mode.sh"
+for HOOK_SH in auto-plugin-mode.sh block-ai-attribution.sh block-main-branch-commits.sh enforce-branch-naming.sh session-start-branch-check.sh auto-pr-after-push.sh session-end-claude-system-check.sh; do
+  cp "$TEMPLATE_DIR/hooks/$HOOK_SH" "$CLAUDE_DIR/hooks/$HOOK_SH"
+  chmod +x "$CLAUDE_DIR/hooks/$HOOK_SH"
+  ok "hooks/$HOOK_SH"
+done
 
 process_template "$TEMPLATE_DIR/hooks/plugin-profiles.json.tmpl" "$CLAUDE_DIR/hooks/plugin-profiles.json"
 ok "hooks/plugin-profiles.json"

@@ -4,12 +4,59 @@
     "deny": []
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit*|git push*|gh pr*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/block-ai-attribution.sh",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/block-main-branch-commits.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(git checkout -b*|git checkout -B*|git switch -c*|git branch *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/enforce-branch-naming.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/auto-pr-after-push.sh",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/auto-plugin-mode.sh"
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start-branch-check.sh",
+            "timeout": 5000,
+            "once": true
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/auto-plugin-mode.sh",
+            "timeout": 10000,
+            "once": true
           }
         ]
       }
@@ -19,8 +66,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/session-end-unified-gate.sh",
-            "timeout": 900000
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/session-end-unified-gate.sh",
+            "timeout": 900000,
+            "once": true
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/session-end-claude-system-check.sh",
+            "timeout": 30000,
+            "once": true
           }
         ]
       }
