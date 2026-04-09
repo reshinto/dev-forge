@@ -34,9 +34,10 @@ Run these commands from any project directory:
 
 Once installed, dev-forge is available in every Claude Code session across all your projects.
 
-3. Run the project scaffold (from your target project directory):
+3. Find the plugin install path and run the project scaffold (from your target project directory):
    ```sh
-   bash $(claude plugin path dev-forge)/scaffold/init.sh
+   DEV_FORGE_PATH=$(grep -o '"installPath": *"[^"]*"' ~/.claude/plugins/installed_plugins.json | grep dev-forge/dev-forge | head -1 | sed 's/.*": *"//' | sed 's/"$//')
+   bash "$DEV_FORGE_PATH/scaffold/init.sh"
    ```
 
 4. Verify setup:

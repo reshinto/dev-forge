@@ -59,7 +59,8 @@ After installation, scaffold your project's `.claude/` directory:
 
 ```bash
 # If installed from marketplace
-bash $(claude plugin path dev-forge)/scaffold/init.sh
+DEV_FORGE_PATH=$(grep -o '"installPath": *"[^"]*"' ~/.claude/plugins/installed_plugins.json | grep dev-forge/dev-forge | head -1 | sed 's/.*": *"//' | sed 's/"$//')
+bash "$DEV_FORGE_PATH/scaffold/init.sh"
 
 # If loaded locally
 bash /path/to/dev-forge/scaffold/init.sh
