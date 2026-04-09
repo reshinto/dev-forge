@@ -132,6 +132,7 @@ Ask Claude to "use the senior-engineer-code-reviewer agent to review the last ch
 
 ## See Also
 
+- [Scaffold guide](scaffold.md)
 - [Skills reference](skills.md)
 - [Agents reference](agents.md)
 - [Hooks reference](hooks.md)

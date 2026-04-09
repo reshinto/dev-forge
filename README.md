@@ -76,6 +76,7 @@ Once installed, dev-forge is available in every Claude Code session across all y
 
 | I want to... | Read |
 |---|---|
+| Set up my project | [docs/scaffold.md](docs/scaffold.md) |
 | Use skills and agents | [docs/skills.md](docs/skills.md), [docs/agents.md](docs/agents.md) |
 | Understand hooks | [docs/hooks.md](docs/hooks.md) |
 | Customize for my project | [docs/customization.md](docs/customization.md) |
