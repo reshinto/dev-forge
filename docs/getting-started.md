@@ -81,10 +81,16 @@ bash /path/to/dev-forge/scaffold/init.sh
 | `.claude/rules/docker-ci-cd.md`             | Docker and CI/CD rules (generated when applicable)             |
 | `.claude/settings.json`                     | Plugin IDs, model preferences, hook registration               |
 | `.claude/settings.local.json`               | Local overrides (not committed)                                |
-| `.claude/hooks/auto-plugin-mode.sh`         | Branch-name-based plugin profile switcher                      |
-| `.claude/hooks/plugin-profiles.json`        | Plugin profile definitions per branch prefix                   |
-| `.claude/hooks/session-end-unified-gate.sh` | End-of-session quality gate (lint, typecheck, tests)           |
-| `.claude/hooks/security-patterns.txt`       | Patterns used by the security scan hook                        |
+| `.claude/hooks/block-ai-attribution.sh`          | Blocks commits/PRs containing AI attribution                   |
+| `.claude/hooks/block-main-branch-commits.sh`     | Blocks commits and pushes on main/master                       |
+| `.claude/hooks/enforce-branch-naming.sh`         | Validates branch naming convention                             |
+| `.claude/hooks/session-start-branch-check.sh`    | Warns if current branch is main/master at session start        |
+| `.claude/hooks/auto-plugin-mode.sh`              | Branch-name-based plugin profile switcher                      |
+| `.claude/hooks/auto-pr-after-push.sh`            | Reminds to create PR after pushing a feature branch            |
+| `.claude/hooks/plugin-profiles.json`             | Plugin profile definitions per branch prefix                   |
+| `.claude/hooks/session-end-unified-gate.sh`      | End-of-session quality gate (lint, typecheck, tests)           |
+| `.claude/hooks/session-end-claude-system-check.sh` | Validates .claude/ config consistency                        |
+| `.claude/hooks/security-patterns.txt`            | Patterns used by the security scan hook                        |
 | `.claude/.scaffold-meta.json`               | Version and checksum record for future updates                 |
 
 ---

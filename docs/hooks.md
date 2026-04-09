@@ -20,7 +20,7 @@ Claude Code supports four hook events:
 | `PostToolUse` | After Claude executes a matched tool call |
 | `Stop` | When the session ends or Claude finishes its last response |
 
-dev-forge uses `SessionStart`, `PreToolUse`, and `PostToolUse`. There is no `Stop` hook registered by default, but `session-end-unified-gate.sh` is available to run manually or via a shell alias.
+dev-forge uses all four events: `SessionStart`, `PreToolUse`, `PostToolUse`, and `Stop`.
 
 ---
 
@@ -45,6 +45,8 @@ Hooks can either **block** the tool call or **warn** without blocking:
 | `post-edit-accessibility-check.sh` | `PostToolUse`: `Edit`, `Write` | Warning | Scans edited UI files for common accessibility violations |
 | `ban-hardcoded-waits.sh` | `PostToolUse`: `Edit`, `Write` | Warning | Flags hardcoded `sleep`, `setTimeout`, and `waitFor` calls with fixed durations |
 | `auto-pr-after-push.sh` | `PostToolUse`: `Bash` | Warning | Detects a successful `git push` and reminds Claude to open a PR immediately |
+| `session-end-unified-gate.sh` | `Stop` | Blocking | Runs lint, format, type check, tests, and security scan in sequence |
+| `session-end-claude-system-check.sh` | `Stop` | Blocking | Validates .claude/ config: agent/skill frontmatter, hook script references, orphaned scripts |
 
 ---
 
@@ -69,7 +71,7 @@ When your branch matches a pattern, the corresponding plugins are activated for 
 
 ## Unified Gate Sequence
 
-`session-end-unified-gate.sh` runs the full quality gate in sequence. It is not triggered automatically by a hook event — run it before committing or creating a PR:
+`session-end-unified-gate.sh` runs the full quality gate in sequence. It fires automatically as a `Stop` hook at session end. You can also run it manually:
 
 ```bash
 bash .claude/hooks/session-end-unified-gate.sh

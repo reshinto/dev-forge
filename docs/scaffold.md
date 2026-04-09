@@ -215,6 +215,12 @@ After all stages complete, the script generates the files and prints a summary:
 [ok] settings.json
 [ok] settings.local.json
 [ok] hooks/auto-plugin-mode.sh
+[ok] hooks/block-ai-attribution.sh
+[ok] hooks/block-main-branch-commits.sh
+[ok] hooks/enforce-branch-naming.sh
+[ok] hooks/session-start-branch-check.sh
+[ok] hooks/auto-pr-after-push.sh
+[ok] hooks/session-end-claude-system-check.sh
 [ok] hooks/plugin-profiles.json
 [ok] hooks/session-end-unified-gate.sh
 [ok] hooks/security-patterns.txt
@@ -224,7 +230,7 @@ After all stages complete, the script generates the files and prints a summary:
   dev-forge scaffold complete!
 ============================================
 
-[info] Generated 16 files in /path/to/your-project/.claude/
+[info] Generated 22 files in /path/to/your-project/.claude/
 
 Next steps:
   1. Review and customize .claude/CLAUDE.md
@@ -252,9 +258,15 @@ After answering the prompts, the scaffold creates the following files inside `.c
 | `rules/docker-ci-cd.md` | Docker and CI/CD rules. Only generated if you opted in. |
 | `settings.json` | Plugin IDs, model preferences, and hook registration. |
 | `settings.local.json` | Local overrides (not committed to git). |
+| `hooks/block-ai-attribution.sh` | Blocks commits/PRs containing AI attribution patterns. |
+| `hooks/block-main-branch-commits.sh` | Blocks commits and pushes on main/master branches. |
+| `hooks/enforce-branch-naming.sh` | Validates branch names follow `<type>/<description>` convention. |
+| `hooks/session-start-branch-check.sh` | Warns if current branch is main/master at session start. |
 | `hooks/auto-plugin-mode.sh` | Branch-name-based plugin profile switcher. |
+| `hooks/auto-pr-after-push.sh` | Reminds to create a PR after pushing a feature branch. |
 | `hooks/plugin-profiles.json` | Plugin profile definitions per branch prefix. |
 | `hooks/session-end-unified-gate.sh` | End-of-session quality gate that runs lint, type check, and tests. |
+| `hooks/session-end-claude-system-check.sh` | Validates .claude/ config consistency (agent/skill frontmatter, hook references). |
 | `hooks/security-patterns.txt` | Patterns used by the security scan hook. |
 | `.scaffold-meta.json` | Version, checksums, and metadata for future updates. |
 
