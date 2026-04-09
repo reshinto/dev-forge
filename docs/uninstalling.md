@@ -31,19 +31,35 @@ dev-forge is non-invasive: it installs into `.claude/` inside your project and r
 
 ## Full uninstall
 
-### Step 1 — Remove the plugin from Claude Code
+Running `claude plugin remove dev-forge` only removes the plugin registration. Claude Code keeps a cached copy of the plugin and the marketplace clone on disk. If you reinstall after a remove, you will get the **old cached version**, not the latest from GitHub.
 
-If installed from the marketplace:
+To fully uninstall, you must remove the registration, the cache, and the marketplace data.
+
+### Step 1 — Remove the plugin registration
 
 ```bash
 claude plugin remove dev-forge
 ```
 
-This removes the plugin registration and all plugin-side agents, skills, and hook scripts.
+### Step 2 — Remove the plugin cache
 
-If you loaded locally with `--plugin-dir`, simply stop passing the flag — there is nothing to unregister.
+```bash
+rm -rf ~/.claude/plugins/cache/dev-forge
+```
 
-### Step 2 — Delete scaffolded project files
+This is the cached copy of the plugin that Claude Code installs from. Without this step, reinstalling will restore the old version.
+
+### Step 3 — Remove the marketplace clone
+
+```bash
+rm -rf ~/.claude/plugins/marketplaces/dev-forge
+```
+
+This is the local clone of the GitHub repository that Claude Code uses to discover plugins. Without this step, `claude plugin marketplace add` may skip re-cloning because it already exists.
+
+### Step 4 — Delete scaffolded project files
+
+From your project directory:
 
 ```bash
 rm -rf .claude/
@@ -57,9 +73,49 @@ If you want to review what will be deleted first:
 ls -la .claude/
 ```
 
-### Step 3 — Remove hook references from settings (if any remain)
+### Step 5 — Remove hook references from settings (if any remain)
 
 If you had hooks referenced in a top-level `settings.json` or `settings.local.json` outside `.claude/`, remove those entries manually.
+
+### All steps together
+
+```bash
+# Remove plugin registration, cache, and marketplace data
+claude plugin remove dev-forge
+rm -rf ~/.claude/plugins/cache/dev-forge
+rm -rf ~/.claude/plugins/marketplaces/dev-forge
+
+# Remove scaffolded project files (run from your project directory)
+rm -rf .claude/
+```
+
+---
+
+## Full uninstall and reinstall
+
+If you want to uninstall completely and reinstall the latest version (e.g., after a plugin update):
+
+```bash
+# Step 1: Remove everything
+claude plugin remove dev-forge
+rm -rf ~/.claude/plugins/cache/dev-forge
+rm -rf ~/.claude/plugins/marketplaces/dev-forge
+
+# Step 2: Re-add the marketplace (fetches the latest from GitHub)
+claude plugin marketplace add reshinto/dev-forge
+
+# Step 3: Reinstall the plugin
+claude plugin install dev-forge@dev-forge
+```
+
+After reinstalling, re-run the scaffold if needed (from your project directory):
+
+```bash
+DEV_FORGE_PATH=$(grep -o '"installPath": *"[^"]*"' ~/.claude/plugins/installed_plugins.json | grep dev-forge/dev-forge | head -1 | sed 's/.*": *"//' | sed 's/"$//')
+bash "$DEV_FORGE_PATH/scaffold/init.sh"
+```
+
+If you loaded locally with `--plugin-dir`, simply stop passing the flag — there is nothing to unregister.
 
 ---
 
@@ -97,6 +153,8 @@ Edit `.claude/hooks/plugin-profiles.json` and remove the entries you no longer w
 | Artifact | Command to remove |
 |----------|-------------------|
 | Plugin registration | `claude plugin remove dev-forge` |
+| Plugin cache | `rm -rf ~/.claude/plugins/cache/dev-forge` |
+| Marketplace data | `rm -rf ~/.claude/plugins/marketplaces/dev-forge` |
 | All scaffolded files | `rm -rf .claude/` |
 | Single hook script | `rm .claude/hooks/<name>.sh` |
 | Hook settings entry | Edit `.claude/settings.json` manually |
@@ -110,10 +168,11 @@ Edit `.claude/hooks/plugin-profiles.json` and remove the entries you no longer w
 
 After uninstalling, confirm the following:
 
-1. `ls .claude/` returns empty or "No such file or directory"
-2. `claude plugin list` does not show `dev-forge`
-3. Starting a new Claude Code session produces no hook-related output
-4. Any references to `${CLAUDE_PLUGIN_ROOT}` in remaining config files have been cleaned up
+1. `claude plugin list` does not show `dev-forge`
+2. `ls ~/.claude/plugins/cache/dev-forge` returns "No such file or directory"
+3. `ls ~/.claude/plugins/marketplaces/dev-forge` returns "No such file or directory"
+4. `ls .claude/` returns empty or "No such file or directory" (in your project)
+5. Starting a new Claude Code session produces no hook-related output
 
 ---
 

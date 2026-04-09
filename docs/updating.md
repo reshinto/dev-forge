@@ -29,11 +29,33 @@ The plugin and the scaffold version together. If you update the plugin but not t
 
 ### If installed from marketplace
 
+Try the standard update commands first:
+
 ```bash
+claude plugin marketplace update dev-forge
 claude plugin update dev-forge
 ```
 
-This pulls the latest agents, skills, and hook scripts from the marketplace source.
+The first command updates the marketplace clone from GitHub. The second updates the installed plugin from the marketplace.
+
+### Clean reinstall (if update does not pick up changes)
+
+Claude Code caches the plugin on disk. If the standard update commands do not pick up changes, do a full clean reinstall:
+
+```bash
+# Remove the plugin registration and its cache
+claude plugin remove dev-forge
+rm -rf ~/.claude/plugins/cache/dev-forge
+rm -rf ~/.claude/plugins/marketplaces/dev-forge
+
+# Re-add the marketplace (fetches the latest from GitHub)
+claude plugin marketplace add reshinto/dev-forge
+
+# Reinstall the plugin
+claude plugin install dev-forge@dev-forge
+```
+
+This ensures you get a fresh copy from GitHub with no stale cached files.
 
 ### If loaded locally
 
